@@ -53,7 +53,7 @@ export class Stack extends ComponentParentableItem {
         this.isStack = true;
 
         this._childElementContainer = new Container({class: 'stack-content'});
-        this._childElementContainer.class.add("lm_items" /* Items */);
+        this._childElementContainer.class.add("lm_items");
 
         this.on('resize', this._resizeListener);
 
@@ -98,7 +98,7 @@ export class Stack extends ComponentParentableItem {
             return;
         this.updateNodeSize();
         for (let i = 0; i < this.contentItems.length; i++) {
-            this._childElementContainer.dom.appendChild(this.contentItems[i].element);
+            this._childElementContainer.append(this.contentItems[i].element);
         }
         super.init();
         const contentItems = this.contentItems;
@@ -228,7 +228,7 @@ export class Stack extends ComponentParentableItem {
         }
         else {
             index = super.addChild(contentItem, index);
-            this._childElementContainer.dom.appendChild(contentItem.element);
+            this._childElementContainer.append(contentItem.element);
             this._header.createTab(contentItem, index);
             this.setActiveComponentItem(contentItem, focus);
             this._header.updateTabSizes();
@@ -581,8 +581,8 @@ export class Stack extends ComponentParentableItem {
                 const dimension = this._header.leftRightSided ? WidthOrHeightPropertyName.width : WidthOrHeightPropertyName.height;
                 content[dimension] -= this.layoutManager.layoutConfig.dimensions.headerHeight;
             }
-            this._childElementContainer.style.width = numberToPixels(content.width);
-            this._childElementContainer.style.height = numberToPixels(content.height);
+            this._childElementContainer.width = content.width;
+            this._childElementContainer.height = content.height;
             for (let i = 0; i < this.contentItems.length; i++) {
                 this.contentItems[i].element.style.width = numberToPixels(content.width);
                 this.contentItems[i].element.style.height = numberToPixels(content.height);

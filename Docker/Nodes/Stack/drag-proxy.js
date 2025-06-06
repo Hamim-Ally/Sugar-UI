@@ -1,21 +1,9 @@
 import { UnexpectedNullError, UnexpectedUndefinedError } from '../../Core/internal-error.js';
-import { Stack } from './index.js';
-import { EventEmitter } from '../../Events/event-emitter.js';
-import { Side } from '../../Utils/types.js';
 import { numberToPixels } from '../../Utils/utils.js';
-/**
- * This class creates a temporary container
- * for the component whilst it is being dragged
- * and handles drag events
- * @internal
- */
-export class DragProxy extends EventEmitter {
-    /**
-     * @param x - The initial x position
-     * @param y - The initial y position
-     * @internal
-     */
-    constructor(x, y, _dragListener, _layoutManager, _componentItem, _originalParent) {
+import { Container, Label } from '../../../Sugar/index.js';
+
+class DragProxy extends Container {
+    constructor(initialX, initialY, _dragListener, _layoutManager, _componentItem, _originalParent) {
         super();
         this._dragListener = _dragListener;
         this._layoutManager = _layoutManager;
@@ -25,60 +13,34 @@ export class DragProxy extends EventEmitter {
         this._lastValidArea = null;
         this._dragListener.on('drag', (offsetX, offsetY, event) => this.onDrag(offsetX, offsetY, event));
         this._dragListener.on('dragStop', () => this.onDrop());
-        this.createDragProxyElements(x, y);
+
+        this.class.add('lm_dragProxy');
+        this.style.left = numberToPixels(initialX);
+        this.style.top = numberToPixels(initialY);
+        const titleElement = new Label({ class: "lm_title", text: this._componentItem.title });;
+        this.append(titleElement);
+
         if (this._componentItem.parent === null) {
             // Note that _contentItem will have dummy GroundItem as parent if initiated by a external drag source
             throw new UnexpectedNullError('DPC10097');
         }
+
         this._componentItemFocused = this._componentItem.focused;
-        if (this._componentItemFocused) {
-            this._componentItem.blur();
-        }
+        if (this._componentItemFocused) { this._componentItem.blur(); }
+
         this._componentItem.parent.removeChild(this._componentItem, true);
-        this.setDimensions();
-        document.body.appendChild(this._element);
+        document.body.appendChild(this.dom);
+
         this.determineMinMaxXY();
         this._layoutManager.calculateItemAreas();
-        this.setDropPosition(x, y);
+        this.setPosition(initialX, initialY);
     }
-    get element() { return this._element; }
-    /** Create Stack-like structure to contain the dragged component */
-    createDragProxyElements(initialX, initialY) {
-        this._element = document.createElement('div');
-        this._element.classList.add("lm_dragProxy" /* DragProxy */);
-        const headerElement = document.createElement('div');
-        headerElement.classList.add("lm_header" /* Header */);
-        const tabsElement = document.createElement('div');
-        tabsElement.classList.add("lm_tabs" /* Tabs */);
-        const tabElement = document.createElement('div');
-        tabElement.classList.add("lm_tab" /* Tab */);
-        const titleElement = document.createElement('span');
-        titleElement.classList.add("lm_title" /* Title */);
-        tabElement.appendChild(titleElement);
-        tabsElement.appendChild(tabElement);
-        headerElement.appendChild(tabsElement);
-        this._proxyContainerElement = document.createElement('div');
-        this._proxyContainerElement.classList.add("lm_content" /* Content */);
-        this._element.appendChild(headerElement);
-        this._element.appendChild(this._proxyContainerElement);
-        if (this._originalParent instanceof Stack && this._originalParent.headerShow) {
-            this._sided = this._originalParent.headerLeftRightSided;
-            this._element.classList.add('lm_' + this._originalParent.headerSide);
-            if ([Side.right, Side.bottom].indexOf(this._originalParent.headerSide) >= 0) {
-                this._proxyContainerElement.insertAdjacentElement('afterend', headerElement);
-            }
-        }
-        this._element.style.left = numberToPixels(initialX);
-        this._element.style.top = numberToPixels(initialY);
-        tabElement.setAttribute('title', this._componentItem.title);
-        titleElement.insertAdjacentText('afterbegin', this._componentItem.title);
-        this._proxyContainerElement.appendChild(this._componentItem.element);
-    }
+
+    get element() { return this.dom; }
+
     determineMinMaxXY() {
         const groundItem = this._layoutManager.groundItem;
-        if (groundItem === undefined) {
-            throw new UnexpectedUndefinedError('DPDMMXY73109');
-        }
+        if (groundItem === undefined) { throw new UnexpectedUndefinedError('DPDMMXY73109'); }
         else {
             const groundElement = groundItem.element;
             const rect = groundElement.getBoundingClientRect();
@@ -88,6 +50,7 @@ export class DragProxy extends EventEmitter {
             this._maxY = this._minY + rect.height;
         }
     }
+
     /**
      * Callback on every mouseMove event during a drag. Determines if the drag is
      * still within the valid drag area and calls the layoutManager to highlight the
@@ -101,9 +64,10 @@ export class DragProxy extends EventEmitter {
     onDrag(offsetX, offsetY, event) {
         const x = event.pageX;
         const y = event.pageY;
-        this.setDropPosition(x, y);
+        this.setPosition(x, y);
         this._componentItem.drag();
     }
+
     /**
      * Sets the target position, highlighting the appropriate area
      *
@@ -112,7 +76,7 @@ export class DragProxy extends EventEmitter {
      *
      * @internal
      */
-    setDropPosition(x, y) {
+    setPosition(x, y) {
         if (this._layoutManager.layoutConfig.settings.constrainDragToContainer) {
             if (x <= this._minX) {
                 x = Math.ceil(this._minX);
@@ -127,14 +91,15 @@ export class DragProxy extends EventEmitter {
                 y = Math.floor(this._maxY);
             }
         }
-        this._element.style.left = numberToPixels(x);
-        this._element.style.top = numberToPixels(y);
+        this.style.left = numberToPixels(x);
+        this.style.top = numberToPixels(y);
         this._area = this._layoutManager.getArea(x, y);
         if (this._area !== null) {
             this._lastValidArea = this._area;
             this._area.contentItem.highlightDropZone(x, y, this._area);
         }
     }
+
     /**
      * Callback when the drag has finished. Determines the drop area
      * and adds the child to it
@@ -183,35 +148,12 @@ export class DragProxy extends EventEmitter {
         else {
             this._componentItem.destroy(); // contentItem children are now destroyed as well
         }
-        this._element.remove();
+        this.dom.remove();
         this._layoutManager.emit('itemDropped', this._componentItem);
         if (this._componentItemFocused && droppedComponentItem !== undefined) {
             droppedComponentItem.focus();
         }
     }
-    /**
-     * Updates the Drag Proxy's dimensions
-     * @internal
-     */
-    setDimensions() {
-        const dimensions = this._layoutManager.layoutConfig.dimensions;
-        if (dimensions === undefined) {
-            throw new Error('DragProxy.setDimensions: dimensions undefined');
-        }
-        let width = dimensions.dragProxyWidth;
-        let height = dimensions.dragProxyHeight;
-        if (width === undefined || height === undefined) {
-            throw new Error('DragProxy.setDimensions: width and/or height undefined');
-        }
-        const headerHeight = this._layoutManager.layoutConfig.header.show === false ? 0 : dimensions.headerHeight;
-        this._element.style.width = numberToPixels(width);
-        this._element.style.height = numberToPixels(height);
-        width -= (this._sided ? headerHeight : 0);
-        height -= (!this._sided ? headerHeight : 0);
-        this._proxyContainerElement.style.width = numberToPixels(width);
-        this._proxyContainerElement.style.height = numberToPixels(height);
-        this._componentItem.enterDragMode(width, height);
-        this._componentItem.show();
-    }
 }
-//# sourceMappingURL=drag-proxy.js.map
+
+export { DragProxy }

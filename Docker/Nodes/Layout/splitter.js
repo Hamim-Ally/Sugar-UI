@@ -1,38 +1,42 @@
+import { Container } from '../../../Sugar/index.js';
 import { DragListener } from '../../Events/drag-listener.js';
 import { numberToPixels } from '../../Utils/utils.js';
-/** @internal */
-export class Splitter {
-    constructor(_isVertical, _size, grabSize) {
+
+class Splitter extends Container {
+    constructor(_isVertical, _size, grabSize){
+        super();
         this._isVertical = _isVertical;
         this._size = _size;
         this._grabSize = grabSize < this._size ? this._size : grabSize;
-        this._element = document.createElement('div');
-        this._element.classList.add("lm_splitter" /* Splitter */);
-        const dragHandleElement = document.createElement('div');
-        dragHandleElement.classList.add("lm_drag_handle" /* DragHandle */);
+
+        this.class.add("lm_splitter");
+        const dragHandleElement = new Container({ class: "lm_drag_handle" });
+
         const handleExcessSize = this._grabSize - this._size;
         const handleExcessPos = handleExcessSize / 2;
+
         if (this._isVertical) {
             dragHandleElement.style.top = numberToPixels(-handleExcessPos);
-            dragHandleElement.style.height = numberToPixels(this._size + handleExcessSize);
-            this._element.classList.add("lm_vertical" /* Vertical */);
-            this._element.style.height = numberToPixels(this._size);
+            dragHandleElement.height = this._size + handleExcessSize;
+            this.class.add("lm_vertical");
+            this.height = this._size;
         }
+
         else {
             dragHandleElement.style.left = numberToPixels(-handleExcessPos);
-            dragHandleElement.style.width = numberToPixels(this._size + handleExcessSize);
-            this._element.classList.add("lm_horizontal" /* Horizontal */);
-            this._element.style.width = numberToPixels(this._size);
+            dragHandleElement.width = this._size + handleExcessSize;
+            this.class.add("lm_horizontal");
+            this.width = this._size;
         }
-        this._element.appendChild(dragHandleElement);
-        this._dragListener = new DragListener(this._element, [dragHandleElement]);
+
+        this.append(dragHandleElement);
+        this._dragListener = new DragListener(this.dom, [dragHandleElement.dom]);
     }
-    get element() { return this._element; }
-    destroy() {
-        this._element.remove();
-    }
-    on(eventName, callback) {
-        this._dragListener.on(eventName, callback);
-    }
+
+    get element() { return this.dom; }
+
+    destroy() {this.dom.remove();}
+    on(eventName, callback) {if (this._dragListener) {this._dragListener.on(eventName, callback);}}
 }
-//# sourceMappingURL=splitter.js.map
+
+export { Splitter }

@@ -4,24 +4,23 @@ import { UnexpectedNullError } from '../../Core/internal-error.js';
 import { ItemType } from '../../Utils/types.js';
 import { getElementWidthAndHeight, setElementHeight, setElementWidth } from '../../Utils/utils.js';
 import { ContentItem } from './content-item.js';
-/** @public */
+import { Container } from '../../../Sugar/index.js';
+
 export class ComponentItem extends ContentItem {
-    /** @internal */
-    constructor(layoutManager, config, 
-    /** @internal */
-    _parentItem) {
-        super(layoutManager, config, _parentItem, document.createElement('div'));
+    constructor(layoutManager, config, _parentItem) {
+        super(layoutManager, config, _parentItem, new Container());
+
         this._parentItem = _parentItem;
-        /** @internal */
         this._focused = false;
         this.isComponent = true;
         this._reorderEnabled = config.reorderEnabled;
         this.applyUpdatableConfig(config);
         this._initialWantMaximise = config.maximised;
-        const containerElement = document.createElement('div');
-        containerElement.classList.add("lm_content" /* Content */);
-        this.element.appendChild(containerElement);
-        this._container = new ComponentContainer(config, this, layoutManager, containerElement, (itemConfig) => this.handleUpdateItemConfigEvent(itemConfig), () => this.show(), () => this.hide(), (suppressEvent) => this.focus(suppressEvent), (suppressEvent) => this.blur(suppressEvent));
+
+        const containerElement = new Container({ class: 'lm_content' });
+        this.element.append(containerElement);
+
+        this._container = new ComponentContainer(config, this, layoutManager, containerElement.dom, (itemConfig) => this.handleUpdateItemConfigEvent(itemConfig), () => this.show(), () => this.hide(), (suppressEvent) => this.focus(suppressEvent), (suppressEvent) => this.blur(suppressEvent));
     }
     /** @internal @deprecated use {@link (ComponentItem:class).componentType} */
     get componentName() { return this._container.componentType; }
@@ -57,7 +56,6 @@ export class ComponentItem extends ContentItem {
             minSizeUnit: this.minSizeUnit,
             id: this.id,
             maximised: false,
-            isClosable: this.isClosable,
             reorderEnabled: this._reorderEnabled,
             title: this._title,
             header: ResolvedHeaderedItemConfig.Header.createCopy(this._headerConfig),
@@ -74,13 +72,7 @@ export class ComponentItem extends ContentItem {
             this.parent.removeChild(this, false);
         }
     }
-    // Used by Drag Proxy
-    /** @internal */
-    enterDragMode(width, height) {
-        setElementWidth(this.element, width);
-        setElementHeight(this.element, height);
-        this._container.enterDragMode(width, height);
-    }
+
     /** @internal */
     exitDragMode() {
         this._container.exitDragMode();
@@ -178,9 +170,8 @@ export class ComponentItem extends ContentItem {
     updateNodeSize(force) {
         if (this.element.style.display !== 'none') {
             // Do not update size of hidden components to prevent unwanted reflows
-            const { width, height } = getElementWidthAndHeight(this.element);
+            const { width, height } = getElementWidthAndHeight(this.element.dom);
             this._container.setSizeToNodeSize(width, height, force);
         }
     }
 }
-//# sourceMappingURL=component-item.js.map

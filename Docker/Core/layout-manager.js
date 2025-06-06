@@ -2,9 +2,7 @@ import { ItemConfig, LayoutConfig } from './config.js';
 import { ResolvedItemConfig, ResolvedLayoutConfig, ResolvedRootItemConfig } from "./resolved-config.js";
 import { BrowserPopout } from '../Nodes/Popout/browser-popout.js';
 import { DragProxy } from '../Nodes/Stack/drag-proxy.js';
-import { DragSource } from '../Nodes/Stack/drag-source.js';
 import { DropTargetIndicator } from '../Nodes/Stack/drop-target-indicator.js';
-import { TransitionIndicator } from '../Nodes/Stack/transition-indicator.js';
 import { ConfigurationError } from './external-error.js';
 import { AssertError, UnexpectedNullError, UnexpectedUndefinedError, UnreachableCaseError } from './internal-error.js';
 import { ComponentItem } from '../Nodes/Component/component-item.js';
@@ -49,8 +47,6 @@ export class LayoutManager extends EventEmitter {
         this._openPopouts = [];
         /** @internal */
         this._dropTargetIndicator = null;
-        /** @internal */
-        this._transitionIndicator = null;
         /** @internal */
         this._itemAreas = [];
         /** @internal */
@@ -100,8 +96,6 @@ export class LayoutManager extends EventEmitter {
     get openPopouts() { return this._openPopouts; }
     /** @internal */
     get dropTargetIndicator() { return this._dropTargetIndicator; }
-    /** @internal @deprecated To be removed */
-    get transitionIndicator() { return this._transitionIndicator; }
     get width() { return this._width; }
     get height() { return this._height; }
     /**
@@ -156,9 +150,7 @@ export class LayoutManager extends EventEmitter {
             if (this._dropTargetIndicator !== null) {
                 this._dropTargetIndicator.destroy();
             }
-            if (this._transitionIndicator !== null) {
-                this._transitionIndicator.destroy();
-            }
+
             this._eventHub.destroy();
             for (const dragSource of this._dragSources) {
                 dragSource.destroy();
@@ -191,7 +183,6 @@ export class LayoutManager extends EventEmitter {
     init() {
         this.setContainer();
         this._dropTargetIndicator = new DropTargetIndicator( /*this.container*/);
-        this._transitionIndicator = new TransitionIndicator();
         this.updateSizeFromContainer();
         let subWindowRootConfig;
         if (this.isSubWindow) {
@@ -811,11 +802,7 @@ export class LayoutManager extends EventEmitter {
             this._windowBeforeUnloadListening = false;
         }
     }
-    newDragSource(element, componentTypeOrItemConfigCallback, componentState, title, id) {
-        const dragSource = new DragSource(this, element, [], componentTypeOrItemConfigCallback, componentState, title, id);
-        this._dragSources.push(dragSource);
-        return dragSource;
-    }
+
     /**
      * Removes a DragListener added by createDragSource() so the corresponding
      * DOM element is not a drag source any more.

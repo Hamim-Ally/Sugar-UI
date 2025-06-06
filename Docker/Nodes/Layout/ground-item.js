@@ -7,6 +7,7 @@ import { ComponentItem } from '../Component/component-item.js';
 import { ComponentParentableItem } from '../Component/component-parentable-item.js';
 import { ContentItem } from '../Component/content-item.js';
 import { RowOrColumn } from './row-or-column.js';
+import { Container } from '../../../Sugar/index.js';
 /**
  * GroundItem is the ContentItem whose one child is the root ContentItem (Root is planted in Ground).
  * (Previously it was called root however this was incorrect as its child is the root item)
@@ -14,8 +15,18 @@ import { RowOrColumn } from './row-or-column.js';
  * @internal
  */
 export class GroundItem extends ComponentParentableItem {
+    static createElement = new Container({ class: ["lm_goldenlayout", "lm_item", "lm_ground"] });
+    static Area = {};
     constructor(layoutManager, rootItemConfig, containerElement) {
-        super(layoutManager, ResolvedGroundItemConfig.create(rootItemConfig), null, GroundItem.createElement(document));
+        super(layoutManager, ResolvedGroundItemConfig.create(rootItemConfig), null, GroundItem.createElement.dom);
+
+        GroundItem.Area.oppositeSides = {
+            y2: 'y1',
+            x2: 'x1',
+            y1: 'y2',
+            x1: 'x2',
+        };
+
         this.isGround = true;
         this._childElementContainer = this.element;
         this._containerElement = containerElement;
@@ -33,6 +44,9 @@ export class GroundItem extends ComponentParentableItem {
         }
         this._containerElement.insertBefore(this.element, before);
     }
+
+
+
     init() {
         if (this.isInitialised === true)
             return;
@@ -325,24 +339,3 @@ export class GroundItem extends ComponentParentableItem {
         }
     }
 }
-/** @internal */
-(function (GroundItem) {
-    let Area;
-    (function (Area) {
-        Area.oppositeSides = {
-            y2: 'y1',
-            x2: 'x1',
-            y1: 'y2',
-            x1: 'x2',
-        };
-    })(Area = GroundItem.Area || (GroundItem.Area = {}));
-    function createElement(document) {
-        const element = document.createElement('div');
-        element.classList.add("lm_goldenlayout" /* GoldenLayout */);
-        element.classList.add("lm_item" /* Item */);
-        element.classList.add("lm_root" /* Root */);
-        return element;
-    }
-    GroundItem.createElement = createElement;
-})(GroundItem || (GroundItem = {}));
-//# sourceMappingURL=ground-item.js.map
