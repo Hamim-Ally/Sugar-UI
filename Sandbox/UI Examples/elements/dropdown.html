@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <title>PCUI Button</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            body {
+                background-color: #333;
+            }
+        </style>
+        <link rel="stylesheet" href="../../css/pcui-theme-grey.css">
+    </head>
+
+    <body>
+        <script type="module">
+            import { Dropdown, Menu } from '../../../Sugar/index.js';
+
+            const menu = new Menu({
+                items: [
+                    { text: 'Item 1' },
+                    { text: 'Item 2' },
+                    {
+                        text: 'Item 3',
+                        items: [
+                            { text: 'Item 3.1' },
+                            { text: 'Item 3.2' },
+                            { text: 'Item 3.3' }
+                        ]
+                    }
+                ]
+            });
+
+            const dropdown = new Dropdown({
+                text: "Click Me",
+                // menu: [
+                //     { text: 'Item 1' },
+                //     { text: 'Item 2' },
+                //     {
+                //         text: 'Item 3',
+                //         items: [
+                //             { text: 'Item 3.1' },
+                //             { text: 'Item 3.2' },
+                //             { text: 'Item 3.3' }
+                //         ]
+                //     }
+                // ]
+                menu: menu
+            })
+
+            document.body.appendChild(dropdown.dom);
+
+            // import { Button, Menu } from '../../../Sugar/index.js';
+
+            // // Create button
+            // const button = new Button({ text: 'Open Menu' });
+            // document.body.appendChild(button.dom);
+
+            // // Create menu
+            // const menu = new Menu({
+            //     items: [
+            //         { text: 'Item 1' },
+            //         { text: 'Item 2' },
+            //         {
+            //             text: 'Item 3',
+            //             items: [
+            //                 { text: 'Item 3.1' },
+            //                 { text: 'Item 3.2' },
+            //                 { text: 'Item 3.3' }
+            //             ]
+            //         }
+            //     ]
+            // });
+            // document.body.appendChild(menu.dom);
+            // menu.hidden = true; // hide initially
+
+            // // Show menu on button click
+            // button.on('click', (e) => {
+            //     const rect = button.dom.getBoundingClientRect();
+            //     menu.hidden = false;
+            //     menu.position(rect.left, rect.bottom);
+            // });
+
+            // // Optional: hide on outside click
+            // window.addEventListener('click', (e) => {
+            //     if (!menu.dom.contains(e.target) && !button.dom.contains(e.target)) {
+            //         menu.hidden = true;
+            //     }
+            // });
+
+
+        </script>
+    </body>
+
+</html>

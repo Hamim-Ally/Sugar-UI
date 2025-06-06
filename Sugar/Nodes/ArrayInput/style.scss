@@ -29,7 +29,7 @@
         }
     }
 
-    > .pcui-button {
+    > .button {
         margin-left: - calc($element-margin / 2);
         margin-right: 0;
         background-color: transparent;
@@ -38,7 +38,7 @@
 }
 
 .pcui-array-input-item-asset {
-    > .pcui-button {
+    > .button {
         margin-top: 36px;
     }
 }

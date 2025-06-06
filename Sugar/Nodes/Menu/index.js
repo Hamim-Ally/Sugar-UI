@@ -1,7 +1,7 @@
 import { Container } from '../Container/index.js';
 import { MenuItem } from '../MenuItem/index.js';
 
-const CLASS_MENU = 'pcui-menu';
+const CLASS_MENU = 'menu';
 const CLASS_MENU_ITEMS = `${CLASS_MENU}-items`;
 /**
  * A Menu is a list of {@link MenuItem}s which can contain child MenuItems. Useful to show context

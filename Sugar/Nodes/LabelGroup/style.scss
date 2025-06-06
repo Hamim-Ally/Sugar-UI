@@ -1,4 +1,4 @@
-.pcui-label-group {
+.label-group {
     @extend .pcui-flex;
 
     align-items: center;
@@ -6,7 +6,7 @@
     margin: $element-margin;
 
     // set width for label and don't let it shrink
-    > .pcui-label:first-child {
+    > .label:first-child {
         width: 100px;
         flex-shrink: 0;
         margin: 0;
@@ -35,15 +35,15 @@
     }
 }
 
-.pcui-label-group-align-top {
-    > .pcui-label:first-child {
+.label-group-align-top {
+    > .label:first-child {
         align-self: flex-start;
         margin-top: 4px;
     }
 }
 
-.pcui-label-group.pcui-disabled {
-    > .pcui-label:first-child {
+.label-group.pcui-disabled {
+    > .label:first-child {
         opacity: $element-opacity-disabled;
     }
 }
