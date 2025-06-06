@@ -136,18 +136,8 @@ export class Header extends EventEmitter {
      */
     updateTabSizes() {
         if (this._tabsContainer.tabCount > 0) {
-            const headerHeight = this._show ? this._layoutManager.layoutConfig.dimensions.headerHeight : 0;
-
-            if (this._leftRightSided) {
-                this._element.height = '';
-                this._element.width = headerHeight;
-            }
-
-            else {
-                this._element.width = '';
-                this._element.height = headerHeight;
-            }
-
+            this._element.width = '';
+            this._element.height = 'auto';
             let availableWidth;
 
             if (this._leftRightSided) { availableWidth = this._element.dom.offsetHeight - this._controlsContainerElement.offsetHeight - this._tabControlOffset; }
@@ -190,7 +180,8 @@ export class Header extends EventEmitter {
             if (this._popoutEvent === undefined) {
                 throw new UnexpectedUndefinedError('HHBPOE17834');
             }
-            else {this._popoutEvent();}}
+            else { this._popoutEvent(); }
+        }
         else {
             const activeComponentItem = this._getActiveComponentItemEvent();
             if (activeComponentItem) {

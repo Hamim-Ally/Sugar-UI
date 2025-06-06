@@ -285,7 +285,6 @@ $height6: 15px; // Appears 1 time
   }
 }
 
-.lm_dragProxy.lm_left,
 .lm_stack.lm_left {
   .lm_header {
     .lm_tabs {
@@ -330,7 +329,6 @@ $height6: 15px; // Appears 1 time
   }
 }
 
-.lm_dragProxy.lm_bottom,
 .lm_stack.lm_bottom {
   .lm_header {
     width: 100%;
@@ -400,13 +398,15 @@ $height6: 15px; // Appears 1 time
 
 // Single Pane content during Drag (style of moving window following mouse)
 .lm_dragProxy {
-  position: absolute;
+  position: absolute !important;
   top: 0;
   left: 0;
-  z-index: 30;
+  z-index: 99;
+  background-color: $bcg-darkest;
+  opacity: 0.8;
 
-  .lm_header {
-    background: transparent;
+  .lm_title {
+    font-size: 12px;
   }
 
   .lm_content {
@@ -418,7 +418,7 @@ $height6: 15px; // Appears 1 time
 // Placeholder Container of target position
 .lm_dropTargetIndicator {
   display: none;
-  position: absolute;
+  position: absolute !important;
   z-index: 35;
   transition: all 200ms ease;
 

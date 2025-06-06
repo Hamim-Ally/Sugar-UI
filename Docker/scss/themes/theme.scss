@@ -37,15 +37,10 @@ $focusedTabBkgdColor: var(--color-layout-focused-tab-bkgd, #354be3); // Appears 
 
 // Placeholder Container of target position
 .lm_dropTargetIndicator {
-    box-shadow: inset 0 0 30px $bcg-darkest;
-    border: 2px dashed $dropTargetIndicatorOutlineForeColor;
+    border: 2px dashed $text-primary !important;
+    background: $bcg-darkest;
+    opacity: 0.4;
     transition: all 200ms ease;
-
-    // Inner Placeholder
-    .lm_inner {
-        background: $bcg-darkest;
-        opacity: 0.2;
-    }
 }
 
 // Separator line (handle to change pane size)
@@ -113,7 +108,7 @@ $focusedTabBkgdColor: var(--color-layout-focused-tab-bkgd, #354be3); // Appears 
     }
 }
 
-.lm_dragProxy.lm_bottom,
+
 .lm_stack.lm_bottom {
     .lm_header .lm_tab {
         box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.3);

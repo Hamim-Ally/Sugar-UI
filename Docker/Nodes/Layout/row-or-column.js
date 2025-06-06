@@ -4,13 +4,12 @@ import { AssertError, UnexpectedNullError } from '../../Core/internal-error.js';
 import { ItemType, SizeUnitEnum } from '../../Utils/types.js';
 import { getElementHeight, getElementWidth, getElementWidthAndHeight, numberToPixels, pixelsToNumber, setElementHeight, setElementWidth } from "../../Utils/utils.js";
 import { ContentItem } from '../Component/content-item.js';
-/** @public */
-export class RowOrColumn extends ContentItem {
-    /** @internal */
-    constructor(isColumn, layoutManager, config, 
-    /** @internal */
-    _rowOrColumnParent) {
-        super(layoutManager, config, _rowOrColumnParent, RowOrColumn.createElement(document, isColumn));
+import { Container } from '../../../Sugar/index.js';
+
+
+class RowOrColumn extends ContentItem {
+    constructor(isColumn, layoutManager, config, _rowOrColumnParent) {
+        super(layoutManager, config, _rowOrColumnParent, RowOrColumn.createElement(isColumn).dom);
         this._rowOrColumnParent = _rowOrColumnParent;
         /** @internal */
         this._splitter = [];
@@ -33,6 +32,21 @@ export class RowOrColumn extends ContentItem {
                 throw new AssertError('ROCCCT00925');
         }
     }
+
+    static getElementDimensionSize(element, dimension) {
+        if (dimension === 'width') { return getElementWidth(element); }
+        else { return getElementHeight(element); }
+    }
+
+    static setElementDimensionSize(element, dimension, value) {
+        if (dimension === 'width') { return setElementWidth(element, value); }
+        else { return setElementHeight(element, value); }
+    }
+
+    static createElement(isColumn) {
+        return new Container({ class: ["lm_item", "lm_" + (isColumn ? "column" : "row")] });
+    }
+
     newComponent(componentType, componentState, title, index) {
         const itemConfig = {
             type: 'component',
@@ -42,6 +56,7 @@ export class RowOrColumn extends ContentItem {
         };
         return this.newItem(itemConfig, index);
     }
+
     addComponent(componentType, componentState, title, index) {
         const itemConfig = {
             type: 'component',
@@ -51,6 +66,7 @@ export class RowOrColumn extends ContentItem {
         };
         return this.addItem(itemConfig, index);
     }
+
     newItem(itemConfig, index) {
         index = this.addItem(itemConfig, index);
         const createdItem = this.contentItems[index];
@@ -62,12 +78,14 @@ export class RowOrColumn extends ContentItem {
             return createdItem;
         }
     }
+
     addItem(itemConfig, index) {
         this.layoutManager.checkMinimiseMaximisedStack();
         const resolvedItemConfig = ItemConfig.resolve(itemConfig, false);
         const contentItem = this.layoutManager.createAndInitContentItem(resolvedItemConfig, this);
         return this.addChild(contentItem, index, false);
     }
+
     /**
      * Add a new contentItem to the Row or Column
      *
@@ -97,7 +115,7 @@ export class RowOrColumn extends ContentItem {
             }
         }
         else {
-            this._childElementContainer.appendChild(contentItem.element);
+            this._childElementContainer.append(contentItem.element);
         }
         super.addChild(contentItem, index);
         const newItemSize = (1 / this.contentItems.length) * 100;
@@ -185,7 +203,7 @@ export class RowOrColumn extends ContentItem {
             return;
         this.updateNodeSize();
         for (let i = 0; i < this.contentItems.length; i++) {
-            this._childElementContainer.appendChild(this.contentItems[i].element);
+            this._childElementContainer.append(this.contentItems[i].element);
         }
         super.init();
         for (let i = 0; i < this.contentItems.length - 1; i++) {
@@ -566,40 +584,5 @@ export class RowOrColumn extends ContentItem {
         }
     }
 }
-/** @public */
-(function (RowOrColumn) {
-    /** @internal */
-    function getElementDimensionSize(element, dimension) {
-        if (dimension === 'width') {
-            return getElementWidth(element);
-        }
-        else {
-            return getElementHeight(element);
-        }
-    }
-    RowOrColumn.getElementDimensionSize = getElementDimensionSize;
-    /** @internal */
-    function setElementDimensionSize(element, dimension, value) {
-        if (dimension === 'width') {
-            return setElementWidth(element, value);
-        }
-        else {
-            return setElementHeight(element, value);
-        }
-    }
-    RowOrColumn.setElementDimensionSize = setElementDimensionSize;
-    /** @internal */
-    function createElement(document, isColumn) {
-        const element = document.createElement('div');
-        element.classList.add("lm_item" /* Item */);
-        if (isColumn) {
-            element.classList.add("lm_column" /* Column */);
-        }
-        else {
-            element.classList.add("lm_row" /* Row */);
-        }
-        return element;
-    }
-    RowOrColumn.createElement = createElement;
-})(RowOrColumn || (RowOrColumn = {}));
-//# sourceMappingURL=row-or-column.js.map
+
+export { RowOrColumn };
