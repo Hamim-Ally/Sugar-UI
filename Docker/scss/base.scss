@@ -1,3 +1,26 @@
+@import '../../Sugar/SCSS/variables-grey';
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+body {
+  overflow: hidden;
+}
+
+
+
+.control-menu .menu-items {
+  .menu-item .menu-item-content {
+    min-width: auto;
+
+    .label {
+      font-size: 12px;
+    }
+  }
+}
+
 // IMPORTANT NOTE
 // Base styling is done in less.  However it is converted to goldenlayout-base.scss so that themes
 // can also be developed using SCSS.
@@ -28,7 +51,7 @@ $height6: 15px; // Appears 1 time
   position: relative;
 }
 
-.lm_row > .lm_item {
+.lm_row>.lm_item {
   float: left;
 }
 
@@ -70,6 +93,7 @@ $height6: 15px; // Appears 1 time
       cursor: ns-resize;
       touch-action: none;
       user-select: none;
+      background: $bcg-darker;
     }
   }
 
@@ -83,6 +107,7 @@ $height6: 15px; // Appears 1 time
       cursor: ew-resize;
       touch-action: none;
       user-select: none;
+      background: $bcg-darker;
     }
   }
 }
@@ -94,28 +119,45 @@ $height6: 15px; // Appears 1 time
   z-index: 1;
   user-select: none;
 
-  [class^=lm_] {
-    box-sizing: content-box !important;
-  }
-
   // Pane controls (popout, maximize, minimize, close)
   .lm_controls {
-    position: absolute;
+    position: relative;
     right: 3px;
     display: flex;
 
-    > * {
+    >* {
       cursor: pointer;
       float: left;
-      width: $width4;
-      height: $height5;
+      width: 24px;
+      height: 24px;
       text-align: center;
     }
+
+    .button {
+      padding: 0px;
+      margin: 0px;
+      line-height: 0;
+      font-weight: 900;
+      background: none;
+      border: 0;
+      border-radius: 0;
+      font-size: 16px;
+
+      &.control {
+        rotate: 90deg;
+      }
+
+    }
+
+
   }
 
   .lm_tabs {
-    position: absolute;
+    // position: absolute;
     display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none; /* or auto / none */
   }
 
   // Single Tab container. A single Tab is set for each pane, a group of Tabs are contained in ".lm_header"
@@ -123,11 +165,11 @@ $height6: 15px; // Appears 1 time
     cursor: pointer;
     float: left;
     height: $height2;
-    margin-top: 1px;
-    padding: 0px 10px 5px;
-    padding-right: 25px;
+    margin-bottom: 1px;
+    padding: 0 10px;
     position: relative;
     touch-action: none;
+    min-width: unset;
 
     i {
       width: $width6;
@@ -145,10 +187,8 @@ $height6: 15px; // Appears 1 time
       }
     }
 
-    .lm_title {
-      display: inline-block;
-      overflow: hidden;
-      text-overflow: ellipsis;
+    .title {
+      margin: 0;
     }
 
     // Close Tab Icon
@@ -166,38 +206,41 @@ $height6: 15px; // Appears 1 time
 // Change stack style to absolute positioning for docking transition ability
 .lm_stack {
   position: relative;
+  overflow: hidden;
 
-  > .lm_items {
-      overflow: hidden;
+  >.lm_items {
+    overflow: hidden;
   }
 
   &.lm_left {
-    > .lm_items {
+    >.lm_items {
       position: absolute;
       left: 20px;
       top: 0;
     }
   }
+
   &.lm_right {
-    > .lm_items {
+    >.lm_items {
       position: absolute;
       right: 20px;
       top: 0;
     }
 
-    > .lm_header {
+    >.lm_header {
       position: absolute;
       right: 0;
       top: 0;
     }
   }
+
   &.lm_bottom {
-    > .lm_items {
+    >.lm_items {
       position: absolute;
       bottom: 20px;
     }
 
-    > .lm_header {
+    >.lm_header {
       position: absolute;
       bottom: 0;
     }
@@ -214,6 +257,7 @@ $height6: 15px; // Appears 1 time
   }
 
   &.lm_dragProxy {
+
     .lm_header,
     .lm_items {
       float: left;
@@ -229,7 +273,8 @@ $height6: 15px; // Appears 1 time
       .lm_tabs {
         transform-origin: left top;
         top: 0;
-        width: 1000px; /*hack*/
+        width: 1000px;
+        /*hack*/
       }
 
       .lm_controls {
@@ -246,6 +291,7 @@ $height6: 15px; // Appears 1 time
     .lm_tabs {
       transform: rotate(-90deg) scaleX(-1);
       left: 0;
+
       .lm_tab {
         transform: scaleX(-1);
         margin-top: 1px;
@@ -253,9 +299,9 @@ $height6: 15px; // Appears 1 time
     }
 
     .lm_tabdropdown_list {
-      top:initial;
-      right:initial;
-      left:20px;
+      top: initial;
+      right: initial;
+      left: 20px;
     }
   }
 }
@@ -278,8 +324,8 @@ $height6: 15px; // Appears 1 time
     }
 
     .lm_tabdropdown_list {
-      top:initial;
-      right:20px;
+      top: initial;
+      right: 20px;
     }
   }
 }
@@ -288,8 +334,9 @@ $height6: 15px; // Appears 1 time
 .lm_stack.lm_bottom {
   .lm_header {
     width: 100%;
+
     .lm_tab {
-      margin-top:0;
+      margin-top: 0;
       border-top: none;
     }
 
@@ -298,8 +345,8 @@ $height6: 15px; // Appears 1 time
     }
 
     .lm_tabdropdown_list {
-      top:initial;
-      bottom:20px;
+      top: initial;
+      bottom: 20px;
     }
   }
 }
@@ -336,7 +383,7 @@ $height6: 15px; // Appears 1 time
       padding-right: 10px;
       margin: 0;
 
-      .lm_title {
+      .title {
         width: 100px;
       }
     }
@@ -389,7 +436,7 @@ $height6: 15px; // Appears 1 time
   display: none;
   width: $width1;
   height: $height1;
-  position: absolute;
+  position: absolute !important;
   top: 0;
   left: 0;
   z-index: 20;
@@ -404,7 +451,7 @@ $height6: 15px; // Appears 1 time
   right: 0;
   z-index: 9999;
 
-  > * {
+  >* {
     width: $width0;
     height: $height0;
     position: absolute;
@@ -412,11 +459,11 @@ $height6: 15px; // Appears 1 time
     left: 0;
   }
 
-  > .lm_bg {
+  >.lm_bg {
     z-index: 10;
   }
 
-  > .lm_icon {
+  >.lm_icon {
     z-index: 20;
   }
 }

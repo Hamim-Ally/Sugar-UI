@@ -1,7 +1,7 @@
 import { CLASS_DEFAULT_MOUSEDOWN, CLASS_MULTIPLE_VALUES } from '../../class.js';
 import { Element } from '../Element/index.js';
 
-const CLASS_LABEL = 'pcui-label';
+const CLASS_LABEL = 'label';
 /**
  * The Label is a simple span element that displays some text.
  */

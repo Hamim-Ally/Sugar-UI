@@ -1,7 +1,7 @@
 import { Container } from '../Container/index.js';
 import { Label } from '../Label/index.js';
 
-const CLASS_MENU_ITEM = 'pcui-menu-item';
+const CLASS_MENU_ITEM = 'menu-item';
 const CLASS_MENU_ITEM_CONTENT = `${CLASS_MENU_ITEM}-content`;
 const CLASS_MENU_ITEM_CHILDREN = `${CLASS_MENU_ITEM}-children`;
 const CLASS_MENU_ITEM_HAS_CHILDREN = `${CLASS_MENU_ITEM}-has-children`;

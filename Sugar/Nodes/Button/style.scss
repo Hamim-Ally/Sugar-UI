@@ -1,5 +1,5 @@
 // buttons
-.pcui-button {
+.button {
     @extend .pcui-no-select;
 
     display: inline-block;
@@ -25,7 +25,7 @@
 }
 
 // icon
-.pcui-button[data-icon] {
+.button[data-icon] {
     // show icon using data-icon attribute
     // as the content
     &::before {
@@ -49,7 +49,7 @@
 }
 
 // focus / hover states
-.pcui-button:not(.pcui-disabled, .pcui-readonly) {
+.button:not(.pcui-disabled, .pcui-readonly) {
     &:hover,
     &:focus {
         color: $text-primary;
@@ -64,19 +64,19 @@
 }
 
 // readonly states
-.pcui-button.pcui-readonly {
+.button.pcui-readonly {
     opacity: $element-opacity-readonly;
     cursor: default;
 }
 
 // disabled states
-.pcui-button.pcui-disabled {
+.button.pcui-disabled {
     opacity: $element-opacity-disabled;
     cursor: default;
 }
 
 // small button
-.pcui-button.pcui-small {
+.button.pcui-small {
     height: 24px;
     line-height: 24px;
     font-size: 10px;

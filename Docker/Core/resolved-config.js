@@ -345,7 +345,7 @@ export var ResolvedLayoutConfig;
             defaultMinItemHeightUnit: SizeUnitEnum.Pixel,
             defaultMinItemWidth: 10,
             defaultMinItemWidthUnit: SizeUnitEnum.Pixel,
-            headerHeight: 20,
+            headerHeight: 24,
             dragProxyWidth: 300,
             dragProxyHeight: 200
         };

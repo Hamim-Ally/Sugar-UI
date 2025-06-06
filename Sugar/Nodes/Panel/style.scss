@@ -214,7 +214,7 @@
     }
 }
 
-.pcui-panel-header > .pcui-button {
+.pcui-panel-header > .button {
     flex-shrink: 0;
     margin: 1px;
     background-color: transparent;
@@ -238,7 +238,7 @@
     color: $text-secondary;
     font-size: 12px;
 
-    .pcui-button {
+    .button {
         background-color: $bcg-primary;
         border-color: $bcg-darker;
 
