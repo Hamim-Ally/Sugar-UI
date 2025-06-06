@@ -6,14 +6,18 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Document</title>
         <link rel="stylesheet" href="../css/theme.css">
+        <link rel="stylesheet" href="../css/pcui-theme-grey.css">
     </head>
 
     <body>
         <script type="module">
             import { GoldenLayout } from "../../Docker/index.js";
+            import { Button } from "../../Sugar/index.js"
 
             const config = {
+
                 root: {
+                                    closeable: false,
                     type: 'column',
                     content: [
                         {
@@ -24,7 +28,7 @@
                                     content: [
                                         {
                                             type: 'component',
-                                            componentName: 'win',
+                                            componentName: 'window1',
                                             title: 'Window 1',
                                             componentState: { label: 'This is Window 1' }
                                         },
@@ -74,6 +78,12 @@
 
             layout.registerComponent('win', function (container, state) {
                 container.element.innerHTML = `<div style="padding:10px;">${state.label}</div>`;
+            });
+
+            let x = new Button({text: 'Click Me'});
+
+            layout.registerComponent('window1', function (container, state) {
+                container.element.appendChild(x.dom);
             });
 
             layout.init();

@@ -2,7 +2,7 @@ import { Container } from '../Container/index.js';
 import { Element } from '../Element/index.js';
 import { Label } from '../Label/index.js';
 
-const CLASS_LABEL_GROUP = 'pcui-label-group';
+const CLASS_LABEL_GROUP = 'label-group';
 const CLASS_LABEL_TOP = `${CLASS_LABEL_GROUP}-align-top`;
 /**
  * Represents a group of an {@link Element} and a {@link Label}. Useful for rows of labeled fields.

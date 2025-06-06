@@ -1,17 +1,18 @@
-/** @internal @deprecated To be removed */
-export class TransitionIndicator {
+import { Container } from "../../../Sugar/index.js";
+
+export class TransitionIndicator extends Container {
     constructor() {
-        this._element = document.createElement('div');
-        this._element.classList.add("lm_transition_indicator" /* TransitionIndicator */);
-        document.body.appendChild(this._element);
+        super();
+        this.class.add("lm_transition_indicator");
+        document.body.appendChild(this.dom);
         this._toElement = null;
         this._fromDimensions = null;
         this._totalAnimationDuration = 200;
         this._animationStartTime = null;
     }
-    destroy() {
-        this._element.remove();
-    }
+
+    destroy() {this.dom.remove();}
+    
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transitionElements(fromElement, toElement) {
         /**
@@ -25,6 +26,7 @@ export class TransitionIndicator {
         // this._element.show().css(this._fromDimensions);
         // animFrame(fnBind(this._nextAnimationFrame, this));
     }
+
     nextAnimationFrame() {
         // if (this._toElement === null || this._fromDimensions === null || this._animationStartTime === null) {
         //     throw new UnexpectedNullError('TINAFTD97115');
@@ -47,8 +49,10 @@ export class TransitionIndicator {
         //     animFrame(fnBind(this._nextAnimationFrame, this));
         // }
     }
+
     measure(element) {
         const rect = element.getBoundingClientRect();
+
         return {
             left: rect.left,
             top: rect.top,
@@ -57,4 +61,3 @@ export class TransitionIndicator {
         };
     }
 }
-//# sourceMappingURL=transition-indicator.js.map

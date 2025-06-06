@@ -11,7 +11,7 @@ const VALID_RESIZABLE_VALUES = [
 ];
 const CLASS_RESIZING = `${CLASS_RESIZABLE}-resizing`;
 const CLASS_RESIZABLE_HANDLE = 'pcui-resizable-handle';
-const CLASS_CONTAINER = 'pcui-container';
+const CLASS_CONTAINER = 'container';
 const CLASS_DRAGGED = `${CLASS_CONTAINER}-dragged`;
 const CLASS_DRAGGED_CHILD = `${CLASS_DRAGGED}-child`;
 /**

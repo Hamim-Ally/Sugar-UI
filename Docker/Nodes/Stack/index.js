@@ -8,88 +8,80 @@ import { getElementWidthAndHeight, numberToPixels, setElementDisplayVisibility }
 import { ComponentItem } from '../Component/component-item.js';
 import { ComponentParentableItem } from '../Component/component-parentable-item.js';
 import { ContentItem } from '../Component/content-item.js';
-/** @public */
+import { Container } from '../../../Sugar/index.js';
+
 export class Stack extends ComponentParentableItem {
-    /** @internal */
     constructor(layoutManager, config, parent) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u;
-        super(layoutManager, config, parent, Stack.createElement(document));
-        /** @internal */
+        super(layoutManager, config, parent, Stack.createElement());
+
         this._headerSideChanged = false;
-        /** @internal */
         this._resizeListener = () => this.handleResize();
-        /** @internal */
-        this._maximisedListener = () => this.handleMaximised();
-        /** @internal */
-        this._minimisedListener = () => this.handleMinimised();
         this._headerConfig = config.header;
         const layoutHeaderConfig = layoutManager.layoutConfig.header;
         const configContent = config.content;
+        
         // If stack has only one component, then we can also check this for header settings
         let componentHeaderConfig;
-        if (configContent.length !== 1) {
-            componentHeaderConfig = undefined;
-        }
+        if (configContent.length !== 1) {componentHeaderConfig = undefined;}
         else {
             const firstChildItemConfig = configContent[0];
             componentHeaderConfig = firstChildItemConfig.header; // will be undefined if not component (and wont be stack)
         }
+
         this._initialWantMaximise = config.maximised;
-        this._initialActiveItemIndex = (_a = config.activeItemIndex) !== null && _a !== void 0 ? _a : 0; // make sure defined
+        this._initialActiveItemIndex = config.activeItemIndex ?? 0;// make sure defined
         // check for defined value for each item in order of Stack (this Item), Component (first child), Manager.
-        const show = (_d = (_c = (_b = this._headerConfig) === null || _b === void 0 ? void 0 : _b.show) !== null && _c !== void 0 ? _c : componentHeaderConfig === null || componentHeaderConfig === void 0 ? void 0 : componentHeaderConfig.show) !== null && _d !== void 0 ? _d : layoutHeaderConfig.show;
-        const popout = (_g = (_f = (_e = this._headerConfig) === null || _e === void 0 ? void 0 : _e.popout) !== null && _f !== void 0 ? _f : componentHeaderConfig === null || componentHeaderConfig === void 0 ? void 0 : componentHeaderConfig.popout) !== null && _g !== void 0 ? _g : layoutHeaderConfig.popout;
-        const maximise = (_k = (_j = (_h = this._headerConfig) === null || _h === void 0 ? void 0 : _h.maximise) !== null && _j !== void 0 ? _j : componentHeaderConfig === null || componentHeaderConfig === void 0 ? void 0 : componentHeaderConfig.maximise) !== null && _k !== void 0 ? _k : layoutHeaderConfig.maximise;
-        const close = (_o = (_m = (_l = this._headerConfig) === null || _l === void 0 ? void 0 : _l.close) !== null && _m !== void 0 ? _m : componentHeaderConfig === null || componentHeaderConfig === void 0 ? void 0 : componentHeaderConfig.close) !== null && _o !== void 0 ? _o : layoutHeaderConfig.close;
-        const minimise = (_r = (_q = (_p = this._headerConfig) === null || _p === void 0 ? void 0 : _p.minimise) !== null && _q !== void 0 ? _q : componentHeaderConfig === null || componentHeaderConfig === void 0 ? void 0 : componentHeaderConfig.minimise) !== null && _r !== void 0 ? _r : layoutHeaderConfig.minimise;
-        const tabDropdown = (_u = (_t = (_s = this._headerConfig) === null || _s === void 0 ? void 0 : _s.tabDropdown) !== null && _t !== void 0 ? _t : componentHeaderConfig === null || componentHeaderConfig === void 0 ? void 0 : componentHeaderConfig.tabDropdown) !== null && _u !== void 0 ? _u : layoutHeaderConfig.tabDropdown;
-        this._maximisedEnabled = maximise !== false;
+        const show = this._headerConfig?.show ?? componentHeaderConfig?.show ?? layoutHeaderConfig.show;
+
         const headerSettings = {
             show: show !== false,
             side: show === false ? Side.top : show,
-            popoutEnabled: popout !== false,
-            popoutLabel: popout === false ? '' : popout,
-            maximiseEnabled: this._maximisedEnabled,
-            maximiseLabel: maximise === false ? '' : maximise,
-            closeEnabled: close !== false,
-            closeLabel: close === false ? '' : close,
-            minimiseEnabled: true,
-            minimiseLabel: minimise,
-            tabDropdownEnabled: tabDropdown !== false,
-            tabDropdownLabel: tabDropdown === false ? '' : tabDropdown,
         };
-        this._header = new Header(layoutManager, this, headerSettings, config.isClosable && close !== false, () => this.getActiveComponentItem(), () => this.remove(), () => this.handlePopoutEvent(), () => this.toggleMaximise(), (ev) => this.handleHeaderClickEvent(ev), (ev) => this.handleHeaderTouchStartEvent(ev), (item) => this.handleHeaderComponentRemoveEvent(item), (item) => this.handleHeaderComponentFocusEvent(item), (x, y, dragListener, item) => this.handleHeaderComponentStartDragEvent(x, y, dragListener, item));
-        // this._dropZones = {};
+
+        this._header = new Header(layoutManager,
+            this,
+            headerSettings,
+            () => this.getActiveComponentItem(),
+            () => this.remove(),
+            () => this.handlePopoutEvent(),
+            () => this.toggleMaximise(),
+            (item) => this.handleHeaderComponentRemoveEvent(item),
+            (item) => this.handleHeaderComponentFocusEvent(item),
+            (x, y, dragListener, item) => this.handleHeaderComponentStartDragEvent(x, y, dragListener, item)
+        );
+        
         this.isStack = true;
-        this._childElementContainer = document.createElement('section');
-        this._childElementContainer.classList.add("lm_items" /* Items */);
+
+        this._childElementContainer = new Container({class: 'stack-content'});
+        this._childElementContainer.class.add("lm_items" /* Items */);
+
         this.on('resize', this._resizeListener);
-        if (this._maximisedEnabled) {
-            this.on('maximised', this._maximisedListener);
-            this.on('minimised', this._minimisedListener);
-        }
+
         this.element.appendChild(this._header.element);
-        this.element.appendChild(this._childElementContainer);
+        this.element.appendChild(this._childElementContainer.dom);
         this.setupHeaderPosition();
-        this._header.updateClosability();
     }
-    get childElementContainer() { return this._childElementContainer; }
+
+
+    get childElementContainer() { return this._childElementContainer.dom; }
     get header() { return this._header; }
     get headerShow() { return this._header.show; }
     get headerSide() { return this._header.side; }
     get headerLeftRightSided() { return this._header.leftRightSided; }
-    /** @internal */
     get contentAreaDimensions() { return this._contentAreaDimensions; }
-    /** @internal */
     get initialWantMaximise() { return this._initialWantMaximise; }
     get isMaximised() { return this === this.layoutManager.maximisedStack; }
     get stackParent() {
-        if (!this.parent) {
-            throw new Error('Stack should always have a parent');
-        }
+        if (!this.parent) {throw new Error('Stack should always have a parent');}
         return this.parent;
     }
-    /** @internal */
+
+    static createElement() {
+        const element = new Container({class: 'lm_stack'});
+        element.class.add("lm_item");
+        return element.dom;
+    }
+
     updateSize(force) {
         this.layoutManager.beginVirtualSizedContainerAdding();
         try {
@@ -100,13 +92,13 @@ export class Stack extends ComponentParentableItem {
             this.layoutManager.endVirtualSizedContainerAdding();
         }
     }
-    /** @internal */
+
     init() {
         if (this.isInitialised === true)
             return;
         this.updateNodeSize();
         for (let i = 0; i < this.contentItems.length; i++) {
-            this._childElementContainer.appendChild(this.contentItems[i].element);
+            this._childElementContainer.dom.appendChild(this.contentItems[i].element);
         }
         super.init();
         const contentItems = this.contentItems;
@@ -131,10 +123,9 @@ export class Stack extends ComponentParentableItem {
                 this._header.updateTabSizes();
             }
         }
-        this._header.updateClosability();
         this.initContentItems();
     }
-    /** @deprecated Use {@link (Stack:class).setActiveComponentItem} */
+
     setActiveContentItem(item) {
         if (!ContentItem.isComponentItem(item)) {
             throw new Error('Stack.setActiveContentItem: item is not a ComponentItem');
@@ -143,6 +134,7 @@ export class Stack extends ComponentParentableItem {
             this.setActiveComponentItem(item, false);
         }
     }
+
     setActiveComponentItem(componentItem, focus, suppressFocusEvent = false) {
         if (this._activeComponentItem !== componentItem) {
             if (this.contentItems.indexOf(componentItem) === -1) {
@@ -170,28 +162,30 @@ export class Stack extends ComponentParentableItem {
             this.layoutManager.setFocusedComponentItem(componentItem, suppressFocusEvent);
         }
     }
-    /** @deprecated Use {@link (Stack:class).getActiveComponentItem} */
+
     getActiveContentItem() {
         var _a;
         return (_a = this.getActiveComponentItem()) !== null && _a !== void 0 ? _a : null;
     }
+
     getActiveComponentItem() {
         return this._activeComponentItem;
     }
-    /** @internal */
+
     focusActiveContentItem() {
         var _a;
         (_a = this._activeComponentItem) === null || _a === void 0 ? void 0 : _a.focus();
     }
-    /** @internal */
+
     setFocusedValue(value) {
         this._header.applyFocusedValue(value);
         super.setFocusedValue(value);
     }
-    /** @internal */
+
     setRowColumnClosable(value) {
         this._header.setRowColumnClosable(value);
     }
+
     newComponent(componentType, componentState, title, index) {
         const itemConfig = {
             type: 'component',
@@ -201,6 +195,7 @@ export class Stack extends ComponentParentableItem {
         };
         return this.newItem(itemConfig, index);
     }
+
     addComponent(componentType, componentState, title, index) {
         const itemConfig = {
             type: 'component',
@@ -210,16 +205,19 @@ export class Stack extends ComponentParentableItem {
         };
         return this.addItem(itemConfig, index);
     }
+
     newItem(itemConfig, index) {
         index = this.addItem(itemConfig, index);
         return this.contentItems[index];
     }
+
     addItem(itemConfig, index) {
         this.layoutManager.checkMinimiseMaximisedStack();
         const resolvedItemConfig = ItemConfig.resolve(itemConfig, false);
         const contentItem = this.layoutManager.createAndInitContentItem(resolvedItemConfig, this);
         return this.addChild(contentItem, index);
     }
+
     addChild(contentItem, index, focus = false) {
         if (index !== undefined && index > this.contentItems.length) {
             index -= 1;
@@ -230,17 +228,17 @@ export class Stack extends ComponentParentableItem {
         }
         else {
             index = super.addChild(contentItem, index);
-            this._childElementContainer.appendChild(contentItem.element);
+            this._childElementContainer.dom.appendChild(contentItem.element);
             this._header.createTab(contentItem, index);
             this.setActiveComponentItem(contentItem, focus);
             this._header.updateTabSizes();
             this.updateSize(false);
             contentItem.container.setBaseLogicalZIndex();
-            this._header.updateClosability();
             this.emitStateChangedEvent();
             return index;
         }
     }
+
     removeChild(contentItem, keepChild) {
         const componentItem = contentItem;
         const index = this.contentItems.indexOf(componentItem);
@@ -259,9 +257,6 @@ export class Stack extends ComponentParentableItem {
         }
         this._header.removeTab(componentItem);
         super.removeChild(componentItem, keepChild);
-        if (!stackWillBeDeleted) {
-            this._header.updateClosability();
-        }
         this.emitStateChangedEvent();
     }
     /**
@@ -309,7 +304,7 @@ export class Stack extends ComponentParentableItem {
             this.emitStateChangedEvent();
         }
     }
-    /** @internal */
+
     destroy() {
         var _a;
         if ((_a = this._activeComponentItem) === null || _a === void 0 ? void 0 : _a.focused) {
@@ -317,12 +312,9 @@ export class Stack extends ComponentParentableItem {
         }
         super.destroy();
         this.off('resize', this._resizeListener);
-        if (this._maximisedEnabled) {
-            this.off('maximised', this._maximisedListener);
-            this.off('minimised', this._minimisedListener);
-        }
         this._header.destroy();
     }
+
     toConfig() {
         let activeItemIndex;
         if (this._activeComponentItem) {
@@ -351,26 +343,7 @@ export class Stack extends ComponentParentableItem {
             return result;
         }
     }
-    /**
-     * Ok, this one is going to be the tricky one: The user has dropped a {@link (ContentItem:class)} onto this stack.
-     *
-     * It was dropped on either the stacks header or the top, right, bottom or left bit of the content area
-     * (which one of those is stored in this._dropSegment). Now, if the user has dropped on the header the case
-     * is relatively clear: We add the item to the existing stack... job done (might be good to have
-     * tab reordering at some point, but lets not sweat it right now)
-     *
-     * If the item was dropped on the content part things are a bit more complicated. If it was dropped on either the
-     * top or bottom region we need to create a new column and place the items accordingly.
-     * Unless, of course if the stack is already within a column... in which case we want
-     * to add the newly created item to the existing column...
-     * either prepend or append it, depending on wether its top or bottom.
-     *
-     * Same thing for rows and left / right drop segments... so in total there are 9 things that can potentially happen
-     * (left, top, right, bottom) * is child of the right parent (row, column) + header drop
-     *
-     * @internal
-     */
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
     onDrop(contentItem, area) {
         /*
          * The item was dropped on the header area. Just add it as a child of this stack and
@@ -483,7 +456,7 @@ export class Stack extends ComponentParentableItem {
             return null;
         }
         const headerArea = super.getElementArea(this._header.element);
-        const contentArea = super.getElementArea(this._childElementContainer);
+        const contentArea = super.getElementArea(this._childElementContainer.dom);
         if (headerArea === null || contentArea === null) {
             throw new UnexpectedNullError('SGAHC13086');
         }
@@ -720,24 +693,17 @@ export class Stack extends ComponentParentableItem {
         dropTargetIndicator.highlightArea(area, 0);
         return;
     }
-    /** @internal */
-    resetHeaderDropZone() {
-        this.layoutManager.tabDropPlaceholder.remove();
-    }
-    /** @internal */
+
+    resetHeaderDropZone() {this.layoutManager.tabDropPlaceholder.remove();}
     setupHeaderPosition() {
         setElementDisplayVisibility(this._header.element, this._header.show);
-        this.element.classList.remove("lm_left" /* Left */, "lm_right" /* Right */, "lm_bottom" /* Bottom */);
+        this.element.classList.remove("lm_left", "lm_right", "lm_bottom");
         if (this._header.leftRightSided) {
             this.element.classList.add('lm_' + this._header.side);
         }
-        //if ([Side.right, Side.bottom].includes(this._header.side)) {
-        //    // move the header behind the content.
-        //    this.element.appendChild(this._header.element);
-        //}
         this.updateSize(false);
     }
-    /** @internal */
+
     highlightBodyDropZone(segment) {
         if (this._contentAreaDimensions === undefined) {
             throw new UnexpectedUndefinedError('SHBDZC82265');
@@ -754,54 +720,32 @@ export class Stack extends ComponentParentableItem {
             }
         }
     }
-    /** @internal */
-    handleResize() {
-        this._header.updateTabSizes();
-    }
-    /** @internal */
-    handleMaximised() {
-        this._header.processMaximised();
-    }
-    /** @internal */
-    handleMinimised() {
-        this._header.processMinimised();
-    }
-    /** @internal */
-    handlePopoutEvent() {
-        this.popout();
-    }
-    /** @internal */
+
+    handleResize() {this._header.updateTabSizes();}
+    handlePopoutEvent() {this.popout();}
+
     handleHeaderClickEvent(ev) {
         const eventName = EventEmitter.headerClickEventName;
         const bubblingEvent = new EventEmitter.ClickBubblingEvent(eventName, this, ev);
         this.emit(eventName, bubblingEvent);
     }
-    /** @internal */
+ 
     handleHeaderTouchStartEvent(ev) {
         const eventName = EventEmitter.headerTouchStartEventName;
         const bubblingEvent = new EventEmitter.TouchStartBubblingEvent(eventName, this, ev);
         this.emit(eventName, bubblingEvent);
     }
-    /** @internal */
-    handleHeaderComponentRemoveEvent(item) {
-        this.removeChild(item, false);
-    }
-    /** @internal */
-    handleHeaderComponentFocusEvent(item) {
-        this.setActiveComponentItem(item, true);
-    }
-    /** @internal */
+
+    handleHeaderComponentRemoveEvent(item) {this.removeChild(item, false);}
+    handleHeaderComponentFocusEvent(item) {this.setActiveComponentItem(item, true);}
+
     handleHeaderComponentStartDragEvent(x, y, dragListener, componentItem) {
-        if (this.isMaximised === true) {
-            this.toggleMaximise();
-        }
+        if (this.isMaximised === true) {this.toggleMaximise();}
         this.layoutManager.startComponentDrag(x, y, dragListener, componentItem, this);
     }
-    /** @internal */
+
     createHeaderConfig() {
-        if (!this._headerSideChanged) {
-            return ResolvedHeaderedItemConfig.Header.createCopy(this._headerConfig);
-        }
+        if (!this._headerSideChanged) {return ResolvedHeaderedItemConfig.Header.createCopy(this._headerConfig);}
         else {
             const show = this._header.show ? this._header.side : false;
             let result = ResolvedHeaderedItemConfig.Header.createCopy(this._headerConfig, show);
@@ -818,20 +762,6 @@ export class Stack extends ComponentParentableItem {
             return result;
         }
     }
-    /** @internal */
-    emitStateChangedEvent() {
-        this.emitBaseBubblingEvent('stateChanged');
-    }
+
+    emitStateChangedEvent() {this.emitBaseBubblingEvent('stateChanged');}
 }
-/** @public */
-(function (Stack) {
-    /** @internal */
-    function createElement(document) {
-        const element = document.createElement('div');
-        element.classList.add("lm_item" /* Item */);
-        element.classList.add("lm_stack" /* Stack */);
-        return element;
-    }
-    Stack.createElement = createElement;
-})(Stack || (Stack = {}));
-//# sourceMappingURL=stack.js.map

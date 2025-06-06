@@ -1,6 +1,6 @@
 import { Element } from '../Element/index.js';
 
-const CLASS_BUTTON = 'pcui-button';
+const CLASS_BUTTON = 'button';
 /**
  * User input with click interaction.
  */

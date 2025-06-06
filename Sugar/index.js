@@ -5,6 +5,7 @@ export { BindingTwoWay } from './binding/BindingTwoWay/index.js';
 export { ArrayInput } from './nodes/ArrayInput/index.js';
 export { BooleanInput } from './nodes/BooleanInput/index.js';
 export { Button } from './nodes/Button/index.js';
+export { Dropdown } from './nodes/Dropdown/index.js';
 export { Canvas } from './nodes/Canvas/index.js';
 export { Code } from './nodes/Code/index.js';
 export { ColorPicker } from './nodes/ColorPicker/index.js';

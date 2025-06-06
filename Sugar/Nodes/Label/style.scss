@@ -1,4 +1,4 @@
-.pcui-label {
+.label {
     display: inline-block;
     box-sizing: border-box;
     margin: $element-margin;
@@ -11,11 +11,11 @@
     user-select: none;
 }
 
-.pcui-label.pcui-default-mousedown {
+.label.pcui-default-mousedown {
     user-select: initial;
 }
 
-.pcui-label.pcui-multiple-values {
+.label.pcui-multiple-values {
     position: relative;
     color: transparent;
 
@@ -30,11 +30,11 @@
     }
 }
 
-.pcui-label.pcui-error {
+.label.pcui-error {
     color: $error-secondary;
 }
 
-.pcui-label.pcui-selectable {
+.label.pcui-selectable {
     &:hover {
         color: $text-active;
         text-decoration: underline;
@@ -44,7 +44,7 @@
 }
 
 // placeholder
-.pcui-label[placeholder] {
+.label[placeholder] {
     position: relative;
 
     &::after {
