@@ -8,7 +8,7 @@ import { Container } from '../../../Sugar/index.js';
 
 export class ComponentItem extends ContentItem {
     constructor(layoutManager, config, _parentItem) {
-        super(layoutManager, config, _parentItem, new Container());
+        super(layoutManager, config, _parentItem, new Container().dom);
 
         this._parentItem = _parentItem;
         this._focused = false;
@@ -18,7 +18,7 @@ export class ComponentItem extends ContentItem {
         this._initialWantMaximise = config.maximised;
 
         const containerElement = new Container({ class: 'lm_content' });
-        this.element.append(containerElement);
+        this.element.appendChild(containerElement.dom);
 
         this._container = new ComponentContainer(config, this, layoutManager, containerElement.dom, (itemConfig) => this.handleUpdateItemConfigEvent(itemConfig), () => this.show(), () => this.hide(), (suppressEvent) => this.focus(suppressEvent), (suppressEvent) => this.blur(suppressEvent));
     }
@@ -170,7 +170,7 @@ export class ComponentItem extends ContentItem {
     updateNodeSize(force) {
         if (this.element.style.display !== 'none') {
             // Do not update size of hidden components to prevent unwanted reflows
-            const { width, height } = getElementWidthAndHeight(this.element.dom);
+            const { width, height } = getElementWidthAndHeight(this.element);
             this._container.setSizeToNodeSize(width, height, force);
         }
     }

@@ -17,7 +17,10 @@
             const config = {
 
                 root: {
-                                    closeable: false,
+                    // settings: {
+                    //     // 👇 Add this!
+                    //     popInOnClose: true,
+                    // },
                     type: 'column',
                     content: [
                         {
@@ -67,11 +70,11 @@
                         }
                     ],
                 },
-                                    settings: {
-                        showCloseIcon: true,
-                        showMaximiseIcon: true,
-                        showPopoutIcon: true
-                    }
+                settings: {
+                    showCloseIcon: true,
+                    showMaximiseIcon: true,
+                    showPopoutIcon: true
+                }
             };
 
             const layout = new GoldenLayout(config);
@@ -80,7 +83,7 @@
                 container.element.innerHTML = `<div style="padding:10px;">${state.label}</div>`;
             });
 
-            let x = new Button({text: 'Click Me'});
+            let x = new Button({ text: 'Click Me' });
 
             layout.registerComponent('window1', function (container, state) {
                 container.element.appendChild(x.dom);
