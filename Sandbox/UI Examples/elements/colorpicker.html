@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>PCUI ColorPicker</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            background-color: #333;
+        }
+
+        .pcui-label-group > .pcui-label:first-child {
+            font-size: 16px;
+        }
+    </style>
+    <link rel="stylesheet" href="../../css/pcui-theme-grey.css">
+</head>
+<body>
+    <script type="module">
+        import { ColorPicker, LabelGroup } from '../../../Sugar/index.js';
+        
+
+        const rgb = new ColorPicker();
+        const rgbGroup = new LabelGroup({
+            field: rgb,
+            text: 'RGB:'
+        });
+
+        const rgba = new ColorPicker({
+            channels: 4
+        });
+        const rgbaGroup = new LabelGroup({
+            field: rgba,
+            text: 'RGB + Alpha:'
+        });
+
+        document.body.appendChild(rgbGroup.dom);
+        document.body.appendChild(rgbaGroup.dom);
+    </script>
+</body>
+</html>

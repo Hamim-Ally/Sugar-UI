@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>PCUI Menu</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            background-color: #333;
+        }
+    </style>
+    <link rel="stylesheet" href="../../css/pcui-theme-grey.css">
+</head>
+<body>
+    <script type="module">
+        import { Label, Menu } from '../../../Sugar/index.js';
+        
+
+        const label = new Label({
+            text: 'Right click to open menu'
+        });
+        document.body.appendChild(label.dom);
+
+        const menu = new Menu({
+            items: [
+                {
+                    text: 'Item 1'
+                },
+                {
+                    text: 'Item 2'
+                },
+                {
+                    text: 'Item 3',
+                    items: [
+                        {
+                            text: 'Item 3.1'
+                        },
+                        {
+                            text: 'Item 3.2'
+                        },
+                        {
+                            text: 'Item 3.3'
+                        }
+                    ]
+                }
+            ]
+        });
+
+        document.body.appendChild(menu.dom);
+
+        window.addEventListener('contextmenu', (event) => {
+            event.stopPropagation();
+            event.preventDefault();
+
+            menu.hidden = false;
+            menu.position(event.clientX, event.clientY);
+        });
+    </script>
+</body>
+</html>

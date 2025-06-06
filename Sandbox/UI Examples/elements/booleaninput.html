@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>PCUI BooleanInput</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            background-color: #333;
+        }
+    </style>
+    <link rel="stylesheet" href="../../css/pcui-theme-grey.css">
+</head>
+<body>
+    <script type="module">
+        import { BooleanInput, LabelGroup } from '../../../Sugar/index.js';
+        
+
+        const checkbox = new BooleanInput();
+        const checkboxGroup = new LabelGroup({
+            field: checkbox,
+            text: 'Checkbox:'
+        });
+        document.body.appendChild(checkboxGroup.dom);
+
+        const toggle = new BooleanInput({
+            type: 'toggle'
+        });
+        const toggleGroup = new LabelGroup({
+            field: toggle,
+            text: 'Toggle:'
+        });
+        document.body.appendChild(toggleGroup.dom);
+    </script>
+</body>
+</html>

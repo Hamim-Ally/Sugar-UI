@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>PCUI Overlay</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            background-color: #333;
+        }
+
+        .pcui-overlay-content {
+            z-index: 0;
+        }
+    </style>
+    <link rel="stylesheet" href="../../css/pcui-theme-grey.css">
+</head>
+<body>
+    <script type="module">
+        import { Button, Label, Overlay } from '../../../Sugar/index.js';
+        
+
+        const overlay = new Overlay();
+
+        const label = new Label({
+            class: 'text',
+            text: 'Dismiss for 1 second?'
+        });
+        overlay.append(label);
+
+        const btnYes = new Button({
+            text: 'Yes'
+        });
+        btnYes.on('click', () => {
+            overlay.hidden = true;
+            setTimeout(() => {
+                overlay.hidden = false;
+            }, 1000);
+        });
+        overlay.append(btnYes);
+
+        document.body.appendChild(overlay.dom);
+    </script>
+</body>
+</html>

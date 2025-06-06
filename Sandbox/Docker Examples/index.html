@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <link rel="stylesheet" href="../css/theme.css">
+    </head>
+
+    <body>
+        <script type="module">
+            import { GoldenLayout } from "../../Docker/index.js";
+
+            const config = {
+                root: {
+                    type: 'column',
+                    content: [
+                        {
+                            type: 'row',
+                            content: [
+                                {
+                                    type: 'stack',
+                                    content: [
+                                        {
+                                            type: 'component',
+                                            componentName: 'win',
+                                            title: 'Window 1',
+                                            componentState: { label: 'This is Window 1' }
+                                        },
+
+                                        {
+                                            type: 'component',
+                                            componentName: 'win',
+                                            title: 'Window 4',
+                                            componentState: { label: 'This is Window 4' }
+                                        },
+
+                                        {
+                                            type: 'component',
+                                            componentName: 'win',
+                                            title: 'Window 2',
+                                            componentState: { label: 'This is Window 2' }
+                                        },
+                                    ]
+
+                                },
+                                {
+                                    type: 'component',
+                                    componentName: 'win',
+                                    title: 'Window 6',
+                                    componentState: { label: 'This is Window 6' }
+                                },
+                                {
+                                    type: 'component',
+                                    componentName: 'win',
+                                    title: 'Window 3',
+                                    componentState: { label: 'This is Window 3' }
+                                },
+
+
+                            ]
+                        }
+                    ],
+                },
+                                    settings: {
+                        showCloseIcon: true,
+                        showMaximiseIcon: true,
+                        showPopoutIcon: true
+                    }
+            };
+
+            const layout = new GoldenLayout(config);
+
+            layout.registerComponent('win', function (container, state) {
+                container.element.innerHTML = `<div style="padding:10px;">${state.label}</div>`;
+            });
+
+            layout.init();
+        </script>
+
+    </body>
+
+</html>
+
+</script>
+</body>
+
+</html>

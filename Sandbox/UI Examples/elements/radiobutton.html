@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>PCUI RadioButton</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            background-color: #333;
+        }
+    </style>
+    <link rel="stylesheet" href="../../css/pcui-theme-grey.css">
+</head>
+<body>
+    <script type="module">
+        import { LabelGroup, RadioButton } from '../../../Sugar/index.js';
+        
+
+        const radioButtons = [];
+
+        for (let i = 0; i < 5; i++) {
+            const radioButton = new RadioButton();
+            radioButton.on('click', () => {
+                radioButtons.forEach(radioButton => {
+                    radioButton.value = false;
+                });
+                radioButton.value = true;
+            });
+            radioButtons.push(radioButton);
+
+            const group = new LabelGroup({
+                text: `Option ${i + 1}`,
+                field: radioButton
+            });
+
+            document.body.appendChild(group.dom);
+        }
+
+        radioButtons[0].value = true;
+    </script>
+</body>
+</html>

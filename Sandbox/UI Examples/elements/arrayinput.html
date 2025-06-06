@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>PCUI ArrayInput</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            background-color: #333;
+        }
+    </style>
+    <link rel="stylesheet" href="../../css/pcui-theme-grey.css">
+</head>
+<body>
+    <script type="module">
+        import { ArrayInput, LabelGroup } from '../../../Sugar/index.js';
+
+        const types = [ 'boolean', 'number', 'string', 'vec2', 'vec3', 'vec4' ];
+
+        for (const type of types) {
+            const arrayInput = new ArrayInput({
+                type: type
+            });
+            const labelGroup = new LabelGroup({
+                field: arrayInput,
+                text: type + ':'
+            });
+            document.body.appendChild(labelGroup.dom);
+        }
+    </script>
+</body>
+</html>

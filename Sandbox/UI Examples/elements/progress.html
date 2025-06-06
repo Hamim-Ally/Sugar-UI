@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>PCUI Progress</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            background-color: #333;
+        }
+    </style>
+    <link rel="stylesheet" href="../../css/pcui-theme-grey.css">
+</head>
+<body>
+    <script type="module">
+        import { Progress } from '../../../Sugar/index.js';
+        
+
+        const progress = new Progress({
+            value: 0
+        });
+
+        setInterval(() => {
+            progress.value++;
+            if (progress.value === 100) {
+                progress.value = 0;
+            }
+        }, 20);
+
+        document.body.appendChild(progress.dom);
+    </script>
+</body>
+</html>

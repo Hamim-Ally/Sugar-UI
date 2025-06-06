@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>PCUI LabelGroup</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            background-color: #333;
+        }
+    </style>
+    <link rel="stylesheet" href="../../css/pcui-theme-grey.css">
+</head>
+<body>
+    <script type="module">
+        import { LabelGroup, TextInput } from '../../../Sugar/index.js';
+        
+
+        for (let i = 1; i <= 10; i++) {
+            const labelGroup = new LabelGroup({
+                text: 'Label ' + i,
+                field: new TextInput()
+            })
+            document.body.appendChild(labelGroup.dom);
+        }
+    </script>
+</body>
+</html>
