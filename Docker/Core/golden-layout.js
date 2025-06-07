@@ -21,10 +21,6 @@ export class GoldenLayout extends VirtualLayout {
         this._containerVirtualVisibilityChangeRequiredEventListener = (container, visible) => this.handleContainerVirtualVisibilityChangeRequiredEvent(container, visible);
         /** @internal */
         this._containerVirtualZIndexChangeRequiredEventListener = (container, logicalZIndex, defaultZIndex) => this.handleContainerVirtualZIndexChangeRequiredEvent(container, logicalZIndex, defaultZIndex);
-        // we told VirtualLayout to not call init() (skipInit set to true) so that Golden Layout can initialise its properties before init is called
-        if (!this.deprecatedConstructor) {
-            this.init();
-        }
     }
     /**
      * Register a new component type with the layout manager.

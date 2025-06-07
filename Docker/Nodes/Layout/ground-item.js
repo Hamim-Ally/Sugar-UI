@@ -160,10 +160,10 @@ export class GroundItem extends ComponentParentableItem {
     }
     /** @internal */
     setSize(width, height) {
-        // console.log(this.element);
         if (width === undefined || height === undefined) {
             this.updateSize(false); // For backwards compatibility with v1.x API
         }
+        
         else {
             this.element.style.width = '100vw'
             this.element.style.height = '100vh'

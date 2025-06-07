@@ -1,13 +1,10 @@
-import { LayoutConfig } from './config.js';
-import { ResolvedLayoutConfig } from './resolved-config.js';
 import { BindError } from './external-error.js';
 import { UnexpectedUndefinedError } from './internal-error.js';
 import { LayoutManager } from './layout-manager.js';
 import { i18nStrings } from '../Utils/i18n-strings.js';
-/** @public */
+
 export class VirtualLayout extends LayoutManager {
-    /** @internal */
-    constructor(configOrOptionalContainer, containerOrBindComponentEventHandler, unbindComponentEventHandler, skipInit) {
+    constructor(configOrOptionalContainer, containerOrBindComponentEventHandler, unbindComponentEventHandler) {
         super(VirtualLayout.createLayoutManagerConstructorParameters(configOrOptionalContainer, containerOrBindComponentEventHandler));
         /** @internal @deprecated use while constructor is not determinate */
         this._bindComponentEventHanlderPassedInConstructor = false; // remove when constructor is determinate
@@ -22,29 +19,31 @@ export class VirtualLayout extends LayoutManager {
                 }
             }
         }
-        if (!this._bindComponentEventHanlderPassedInConstructor) {
-            // backward compatibility
-            if (this.isSubWindow) {
-                // document.body.style.visibility = 'hidden';
-                // Set up layoutConfig since constructor is not determinate and may exit early. Other functions may need
-                // this.layoutConfig. this.layoutConfig is again calculated in the same way when init() completes.
-                // Remove this when constructor is determinate.
-                if (this._constructorOrSubWindowLayoutConfig === undefined) {
-                    throw new UnexpectedUndefinedError('VLC98823');
-                }
-                else {
-                    const resolvedLayoutConfig = LayoutConfig.resolve(this._constructorOrSubWindowLayoutConfig);
-                    // remove root from layoutConfig
-                    this.layoutConfig = Object.assign(Object.assign({}, resolvedLayoutConfig), { root: undefined });
-                }
-            }
-        }
-        if (skipInit !== true) {
-            if (!this.deprecatedConstructor) {
-                this.init();
-            }
-        }
     }
+
+    static createLayoutManagerConstructorParameters(configOrOptionalContainer, containerOrBindComponentEventHandler) {
+        let containerElement;
+        let config;
+
+        if (configOrOptionalContainer === undefined) { config = undefined; }
+        else {
+            if (configOrOptionalContainer instanceof HTMLElement) {
+                config = undefined;
+                containerElement = configOrOptionalContainer;
+            }
+            else { config = configOrOptionalContainer; }
+        }
+
+        if (containerElement === undefined) {
+            if (containerOrBindComponentEventHandler instanceof HTMLElement) { containerElement = containerOrBindComponentEventHandler; }
+        }
+
+        return {
+            constructorLayoutConfig: config,
+            containerElement,
+        };
+    }
+
     destroy() {
         this.bindComponentEvent = undefined;
         this.unbindComponentEvent = undefined;
@@ -69,23 +68,7 @@ export class VirtualLayout extends LayoutManager {
             document.addEventListener('DOMContentLoaded', () => this.init(), { passive: true });
             return;
         }
-        /**
-         * If this is a subwindow, wait a few milliseconds for the original
-         * page's js calls to be executed, then replace the bodies content
-         * with GoldenLayout
-         */
-        if (!this._bindComponentEventHanlderPassedInConstructor && this.isSubWindow === true && !this._creationTimeoutPassed) {
-            setTimeout(() => this.init(), 7);
-            this._creationTimeoutPassed = true;
-            return;
-        }
-        if (this.isSubWindow === true) {
-            if (!this._bindComponentEventHanlderPassedInConstructor) {
-                this.clearHtmlAndAdjustStylesForSubWindow();
-            }
-            // Expose this instance on the window object to allow the opening window to interact with it
-            window.__glInstance = this;
-        }
+
         super.init();
     }
     /**
@@ -105,6 +88,7 @@ export class VirtualLayout extends LayoutManager {
         appendNodeLists[1] = document.querySelectorAll('body style');
         appendNodeLists[2] = document.querySelectorAll('template');
         appendNodeLists[3] = document.querySelectorAll('.gl_keep');
+
         for (let listIdx = 0; listIdx < appendNodeLists.length; listIdx++) {
             const appendNodeList = appendNodeLists[listIdx];
             for (let nodeIdx = 0; nodeIdx < appendNodeList.length; nodeIdx++) {
@@ -112,25 +96,19 @@ export class VirtualLayout extends LayoutManager {
                 headElement.appendChild(node);
             }
         }
+
         const bodyElement = document.body;
         bodyElement.innerHTML = '';
         bodyElement.style.visibility = 'visible';
         this.checkAddDefaultPopinButton();
-        /*
-        * This seems a bit pointless, but actually causes a reflow/re-evaluation getting around
-        * slickgrid's "Cannot find stylesheet." bug in chrome
-        */
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const x = document.body.offsetHeight;
     }
+
     /**
      * Will add button if not popinOnClose specified in settings
      * @returns true if added otherwise false
      */
     checkAddDefaultPopinButton() {
-        if (this.layoutConfig.settings.popInOnClose) {
-            return false;
-        }
+        if (this.layoutConfig.settings.popInOnClose) { return false; }
         else {
             const popInButtonElement = document.createElement('div');
             popInButtonElement.classList.add("lm_popin" /* Popin */);
@@ -146,12 +124,14 @@ export class VirtualLayout extends LayoutManager {
             return true;
         }
     }
+
     /** @internal */
     bindComponent(container, itemConfig) {
         if (this.bindComponentEvent !== undefined) {
             const bindableComponent = this.bindComponentEvent(container, itemConfig);
             return bindableComponent;
         }
+
         else {
             if (this.getComponentEvent !== undefined) {
                 return {
@@ -159,6 +139,7 @@ export class VirtualLayout extends LayoutManager {
                     component: this.getComponentEvent(container, itemConfig),
                 };
             }
+
             else {
                 // There is no component registered for this type, and we don't have a getComponentEvent defined.
                 // This might happen when the user pops out a dialog and the component types are not registered upfront.
@@ -168,76 +149,15 @@ export class VirtualLayout extends LayoutManager {
             }
         }
     }
+
     /** @internal */
     unbindComponent(container, virtual, component) {
-        if (this.unbindComponentEvent !== undefined) {
-            this.unbindComponentEvent(container);
-        }
+        if (this.unbindComponentEvent !== undefined) { this.unbindComponentEvent(container); }
         else {
             if (!virtual && this.releaseComponentEvent !== undefined) {
-                if (component === undefined) {
-                    throw new UnexpectedUndefinedError('VCUCRCU333998');
-                }
-                else {
-                    this.releaseComponentEvent(container, component);
-                }
+                if (component === undefined) { throw new UnexpectedUndefinedError('VCUCRCU333998'); }
+                else { this.releaseComponentEvent(container, component); }
             }
         }
     }
 }
-/** @public */
-(function (VirtualLayout) {
-    /** @internal
-     * Veriable to hold the state whether we already checked if we are running in a sub window.
-     * Fixes popout and creation of nested golden-layouts.
-     */
-    let subWindowChecked = false;
-    /** @internal */
-    function createLayoutManagerConstructorParameters(configOrOptionalContainer, containerOrBindComponentEventHandler) {
-        const windowConfigKey = subWindowChecked ? null : new URL(document.location.href).searchParams.get('gl-window');
-        subWindowChecked = true;
-        const isSubWindow = windowConfigKey !== null;
-        let containerElement;
-        let config;
-        if (windowConfigKey !== null) {
-            const windowConfigStr = localStorage.getItem(windowConfigKey);
-            if (windowConfigStr === null) {
-                throw new Error('Null gl-window Config');
-            }
-            localStorage.removeItem(windowConfigKey);
-            const minifiedWindowConfig = JSON.parse(windowConfigStr);
-            const resolvedConfig = ResolvedLayoutConfig.unminifyConfig(minifiedWindowConfig);
-            config = LayoutConfig.fromResolved(resolvedConfig);
-            if (configOrOptionalContainer instanceof HTMLElement) {
-                containerElement = configOrOptionalContainer;
-            }
-        }
-        else {
-            if (configOrOptionalContainer === undefined) {
-                config = undefined;
-            }
-            else {
-                if (configOrOptionalContainer instanceof HTMLElement) {
-                    config = undefined;
-                    containerElement = configOrOptionalContainer;
-                }
-                else {
-                    // backwards compatibility
-                    config = configOrOptionalContainer;
-                }
-            }
-            if (containerElement === undefined) {
-                if (containerOrBindComponentEventHandler instanceof HTMLElement) {
-                    containerElement = containerOrBindComponentEventHandler;
-                }
-            }
-        }
-        return {
-            constructorOrSubWindowLayoutConfig: config,
-            isSubWindow,
-            containerElement,
-        };
-    }
-    VirtualLayout.createLayoutManagerConstructorParameters = createLayoutManagerConstructorParameters;
-})(VirtualLayout || (VirtualLayout = {}));
-//# sourceMappingURL=virtual-layout.js.map

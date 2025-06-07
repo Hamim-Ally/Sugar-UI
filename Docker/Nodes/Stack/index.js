@@ -568,7 +568,6 @@ export class Stack extends ComponentParentableItem {
             const content = getElementWidthAndHeight(this.element);
             this._childElementContainer.width = content.width;
             this._childElementContainer.height = content.height - this._header.element.offsetHeight;
-            console.log(content.height);
             for (let i = 0; i < this.contentItems.length; i++) {
                 this.contentItems[i].element.style.width = numberToPixels(content.width);
                 this.contentItems[i].element.style.height = numberToPixels(content.height);

@@ -2,7 +2,7 @@ import { ResolvedComponentItemConfig, ResolvedHeaderedItemConfig } from '../../C
 import { ComponentContainer } from '../Container/component-container.js';
 import { UnexpectedNullError } from '../../Core/internal-error.js';
 import { ItemType } from '../../Utils/types.js';
-import { getElementWidthAndHeight, setElementHeight, setElementWidth } from '../../Utils/utils.js';
+import { getElementWidthAndHeight } from '../../Utils/utils.js';
 import { ContentItem } from './content-item.js';
 import { Container } from '../../../Sugar/index.js';
 

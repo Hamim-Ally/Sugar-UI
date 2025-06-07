@@ -1,7 +1,6 @@
 export * from './Core/config.js';
 export * from './Core/resolved-config.js';
 export { ComponentContainer } from './Nodes/Container/component-container.js';
-export { BrowserPopout } from './Nodes/Popout/browser-popout.js';
 export { Header } from './Nodes/Stack/header.js';
 export { Tab } from './Nodes/Stack/tab.js';
 export * from './Core/external-error.js';
