@@ -1,5 +1,4 @@
 import { Container } from '../../../Sugar/index.js';
-import { AssertError } from '../../Core/internal-error.js';
 import { numberToPixels, pixelsToNumber } from '../../Utils/utils.js';
 import { Tab } from './tab.js';
 
@@ -80,7 +79,7 @@ export class TabsContainer extends Container {
             }
         }
         if (activeIndex < 0) {
-            throw new AssertError('HSACI56632');
+            console.warn('Active component item not found in tabs');
         }
         else {
             if (this._layoutManager.layoutConfig.settings.reorderOnTabMenuClick) {

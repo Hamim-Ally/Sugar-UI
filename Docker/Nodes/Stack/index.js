@@ -1,7 +1,6 @@
 import { ItemConfig } from '../../Core/config.js';
 import { ResolvedHeaderedItemConfig, ResolvedItemConfig, ResolvedStackItemConfig } from '../../Core/resolved-config.js';
 import { Header } from './header.js';
-import { AssertError, UnexpectedNullError, UnexpectedUndefinedError } from '../../Core/internal-error.js';
 import { EventEmitter } from '../../Events/event-emitter.js';
 import { ItemType, SizeUnitEnum } from '../../Utils/types.js';
 import { getElementWidthAndHeight, numberToPixels } from '../../Utils/utils.js';
@@ -209,10 +208,10 @@ export class Stack extends ComponentParentableItem {
     addChild(contentItem, index, focus = false) {
         if (index !== undefined && index > this.contentItems.length) {
             index -= 1;
-            throw new AssertError('SAC99728'); // undisplayChild() removed so this condition should no longer occur
+            console.error(`Stack.addChild: index ${index} is out of bounds, adjusting to ${index}`);
         }
         if (!(contentItem instanceof ComponentItem)) {
-            throw new AssertError('SACC88532'); // Stacks can only have Component children
+            console.error('Stack.addChild: contentItem is not a ComponentItem');
         }
         else {
             index = super.addChild(contentItem, index);
@@ -269,7 +268,7 @@ export class Stack extends ComponentParentableItem {
                     contentItem.enterStackMaximised();
                 }
                 else {
-                    throw new AssertError('SMAXI87773');
+                    console.error('Stack.maximise: contentItem is not a ComponentItem');
                 }
             }
             this.emitStateChangedEvent();
@@ -286,7 +285,7 @@ export class Stack extends ComponentParentableItem {
                     contentItem.exitStackMaximised();
                 }
                 else {
-                    throw new AssertError('SMINI87773');
+                    console.error('Stack.minimise: contentItem is not a ComponentItem');
                 }
             }
             this.emitStateChangedEvent();
@@ -340,7 +339,7 @@ export class Stack extends ComponentParentableItem {
         if (this._dropSegment === "header" /* Header */) {
             this.resetHeaderDropZone();
             if (this._dropIndex === undefined) {
-                throw new UnexpectedUndefinedError('SODDI68990');
+                console.error('Stack.onDrop: dropIndex is undefined');
             }
             else {
                 this.addChild(contentItem, this._dropIndex);
@@ -446,7 +445,7 @@ export class Stack extends ComponentParentableItem {
         const headerArea = super.getElementArea(this._header.element);
         const contentArea = super.getElementArea(this._childElementContainer.dom);
         if (headerArea === null || contentArea === null) {
-            throw new UnexpectedNullError('SGAHC13086');
+            console.error('Stack.getArea: headerArea or contentArea is null');
         }
         const contentWidth = contentArea.x2 - contentArea.x1;
         const contentHeight = contentArea.y2 - contentArea.y1;
@@ -593,7 +592,7 @@ export class Stack extends ComponentParentableItem {
         }
         const dropTargetIndicator = this.layoutManager.dropTargetIndicator;
         if (dropTargetIndicator === null) {
-            throw new UnexpectedNullError('SHHDZDTI97110');
+            console.error('Stack.highlightHeaderDropZone: dropTargetIndicator is null');
         }
         let area;
         // Empty stack
@@ -690,13 +689,13 @@ export class Stack extends ComponentParentableItem {
 
     highlightBodyDropZone(segment) {
         if (this._contentAreaDimensions === undefined) {
-            throw new UnexpectedUndefinedError('SHBDZC82265');
+            console.error('Stack.highlightBodyDropZone: _contentAreaDimensions is undefined');
         }
         else {
             const highlightArea = this._contentAreaDimensions[segment].highlightArea;
             const dropTargetIndicator = this.layoutManager.dropTargetIndicator;
             if (dropTargetIndicator === null) {
-                throw new UnexpectedNullError('SHBDZD96110');
+                console.error('Stack.highlightBodyDropZone: dropTargetIndicator is null');
             }
             else {
                 dropTargetIndicator.highlightArea(highlightArea, 1);

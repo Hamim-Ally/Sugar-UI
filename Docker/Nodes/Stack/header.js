@@ -1,7 +1,6 @@
 import { Container, Dropdown } from '../../../Sugar/index.js';
 import { UnexpectedUndefinedError } from '../../Core/internal-error.js';
 import { EventEmitter } from '../../Events/event-emitter.js';
-import { Side } from '../../Utils/types.js';
 import { TabsContainer } from './tabs-container.js';
 
 // This class represents a header above a Stack ContentItem.
@@ -131,7 +130,7 @@ export class Header extends EventEmitter {
 
     handleTabInitiatedComponentRemoveEvent(componentItem) {
         if (this._componentRemoveEvent === undefined) {
-            throw new UnexpectedUndefinedError('HHTCE22294');
+            console.error('Component remove event is not defined');
         }
         else {
             this._componentRemoveEvent(componentItem);
@@ -140,7 +139,7 @@ export class Header extends EventEmitter {
 
     handleTabInitiatedComponentFocusEvent(componentItem) {
         if (this._componentFocusEvent === undefined) {
-            throw new UnexpectedUndefinedError('HHTAE22294');
+            console.error('Component focus event is not defined');
         }
         else {
             this._componentFocusEvent(componentItem);
@@ -155,6 +154,5 @@ export class Header extends EventEmitter {
         else {
             this._componentDragStartEvent(x, y, dragListener, componentItem);
         }
-
     }
 }
