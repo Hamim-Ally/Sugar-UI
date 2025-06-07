@@ -3,8 +3,8 @@ import { ResolvedHeaderedItemConfig, ResolvedItemConfig, ResolvedStackItemConfig
 import { Header } from './header.js';
 import { AssertError, UnexpectedNullError, UnexpectedUndefinedError } from '../../Core/internal-error.js';
 import { EventEmitter } from '../../Events/event-emitter.js';
-import { ItemType, Side, SizeUnitEnum, WidthOrHeightPropertyName } from '../../Utils/types.js';
-import { getElementWidthAndHeight, numberToPixels, setElementDisplayVisibility } from '../../Utils/utils.js';
+import { ItemType, SizeUnitEnum } from '../../Utils/types.js';
+import { getElementWidthAndHeight, numberToPixels } from '../../Utils/utils.js';
 import { ComponentItem } from '../Component/component-item.js';
 import { ComponentParentableItem } from '../Component/component-parentable-item.js';
 import { ContentItem } from '../Component/content-item.js';
@@ -17,12 +17,11 @@ export class Stack extends ComponentParentableItem {
         this._headerSideChanged = false;
         this._resizeListener = () => this.handleResize();
         this._headerConfig = config.header;
-        const layoutHeaderConfig = layoutManager.layoutConfig.header;
         const configContent = config.content;
-        
-        // If stack has only one component, then we can also check this for header settings
+
         let componentHeaderConfig;
-        if (configContent.length !== 1) {componentHeaderConfig = undefined;}
+        // If stack has only one component, then we can also check this for header settings
+        if (configContent.length !== 1) { componentHeaderConfig = undefined; }
         else {
             const firstChildItemConfig = configContent[0];
             componentHeaderConfig = firstChildItemConfig.header; // will be undefined if not component (and wont be stack)
@@ -30,29 +29,20 @@ export class Stack extends ComponentParentableItem {
 
         this._initialWantMaximise = config.maximised;
         this._initialActiveItemIndex = config.activeItemIndex ?? 0;// make sure defined
-        // check for defined value for each item in order of Stack (this Item), Component (first child), Manager.
-        const show = this._headerConfig?.show ?? componentHeaderConfig?.show ?? layoutHeaderConfig.show;
-
-        const headerSettings = {
-            show: show !== false,
-            side: show === false ? Side.top : show,
-        };
 
         this._header = new Header(layoutManager,
             this,
-            headerSettings,
             () => this.getActiveComponentItem(),
             () => this.remove(),
-            () => this.handlePopoutEvent(),
             () => this.toggleMaximise(),
             (item) => this.handleHeaderComponentRemoveEvent(item),
             (item) => this.handleHeaderComponentFocusEvent(item),
             (x, y, dragListener, item) => this.handleHeaderComponentStartDragEvent(x, y, dragListener, item)
         );
-        
+
         this.isStack = true;
 
-        this._childElementContainer = new Container({class: 'stack-content'});
+        this._childElementContainer = new Container({ class: 'stack-content' });
         this._childElementContainer.class.add("lm_items");
 
         this.on('resize', this._resizeListener);
@@ -65,19 +55,17 @@ export class Stack extends ComponentParentableItem {
 
     get childElementContainer() { return this._childElementContainer.dom; }
     get header() { return this._header; }
-    get headerShow() { return this._header.show; }
-    get headerSide() { return this._header.side; }
     get headerLeftRightSided() { return this._header.leftRightSided; }
     get contentAreaDimensions() { return this._contentAreaDimensions; }
     get initialWantMaximise() { return this._initialWantMaximise; }
     get isMaximised() { return this === this.layoutManager.maximisedStack; }
     get stackParent() {
-        if (!this.parent) {throw new Error('Stack should always have a parent');}
+        if (!this.parent) { throw new Error('Stack should always have a parent'); }
         return this.parent;
     }
 
     static createElement() {
-        const element = new Container({class: 'lm_stack'});
+        const element = new Container({ class: 'lm_stack' });
         element.class.add("lm_item");
         return element.dom;
     }
@@ -577,10 +565,6 @@ export class Stack extends ComponentParentableItem {
     updateNodeSize() {
         if (this.element.style.display !== 'none') {
             const content = getElementWidthAndHeight(this.element);
-            if (this._header.show) {
-                const dimension = this._header.leftRightSided ? WidthOrHeightPropertyName.width : WidthOrHeightPropertyName.height;
-                content[dimension] -= this.layoutManager.layoutConfig.dimensions.headerHeight;
-            }
             this._childElementContainer.width = content.width;
             this._childElementContainer.height = content.height;
             for (let i = 0; i < this.contentItems.length; i++) {
@@ -694,9 +678,8 @@ export class Stack extends ComponentParentableItem {
         return;
     }
 
-    resetHeaderDropZone() {this.layoutManager.tabDropPlaceholder.remove();}
+    resetHeaderDropZone() { this.layoutManager.tabDropPlaceholder.remove(); }
     setupHeaderPosition() {
-        setElementDisplayVisibility(this._header.element, this._header.show);
         this.element.classList.remove("lm_left", "lm_right", "lm_bottom");
         if (this._header.leftRightSided) {
             this.element.classList.add('lm_' + this._header.side);
@@ -721,47 +704,28 @@ export class Stack extends ComponentParentableItem {
         }
     }
 
-    handleResize() {this._header.updateTabSizes();}
-    handlePopoutEvent() {this.popout();}
+    handleResize() { this._header.updateTabSizes(); }
 
     handleHeaderClickEvent(ev) {
         const eventName = EventEmitter.headerClickEventName;
         const bubblingEvent = new EventEmitter.ClickBubblingEvent(eventName, this, ev);
         this.emit(eventName, bubblingEvent);
     }
- 
+
     handleHeaderTouchStartEvent(ev) {
         const eventName = EventEmitter.headerTouchStartEventName;
         const bubblingEvent = new EventEmitter.TouchStartBubblingEvent(eventName, this, ev);
         this.emit(eventName, bubblingEvent);
     }
 
-    handleHeaderComponentRemoveEvent(item) {this.removeChild(item, false);}
-    handleHeaderComponentFocusEvent(item) {this.setActiveComponentItem(item, true);}
+    handleHeaderComponentRemoveEvent(item) { this.removeChild(item, false); }
+    handleHeaderComponentFocusEvent(item) { this.setActiveComponentItem(item, true); }
 
     handleHeaderComponentStartDragEvent(x, y, dragListener, componentItem) {
-        if (this.isMaximised === true) {this.toggleMaximise();}
+        if (this.isMaximised === true) { this.toggleMaximise(); }
         this.layoutManager.startComponentDrag(x, y, dragListener, componentItem, this);
     }
 
-    createHeaderConfig() {
-        if (!this._headerSideChanged) {return ResolvedHeaderedItemConfig.Header.createCopy(this._headerConfig);}
-        else {
-            const show = this._header.show ? this._header.side : false;
-            let result = ResolvedHeaderedItemConfig.Header.createCopy(this._headerConfig, show);
-            if (result === undefined) {
-                result = {
-                    show,
-                    popout: undefined,
-                    maximise: undefined,
-                    close: undefined,
-                    minimise: undefined,
-                    tabDropdown: undefined,
-                };
-            }
-            return result;
-        }
-    }
-
-    emitStateChangedEvent() {this.emitBaseBubblingEvent('stateChanged');}
+    createHeaderConfig() { if (!this._headerSideChanged) { return ResolvedHeaderedItemConfig.Header.createCopy(this._headerConfig); } }
+    emitStateChangedEvent() { this.emitBaseBubblingEvent('stateChanged'); }
 }

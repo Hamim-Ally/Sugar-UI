@@ -6,8 +6,8 @@ import { TabsContainer } from './tabs-container.js';
 
 // This class represents a header above a Stack ContentItem.
 export class Header extends EventEmitter {
-    constructor(_layoutManager, _parent, settings, _getActiveComponentItemEvent,
-        closeEvent, _popoutEvent, _maximiseToggleEvent, _componentRemoveEvent,
+    constructor(_layoutManager, _parent, _getActiveComponentItemEvent,
+        closeEvent, _maximiseToggleEvent, _componentRemoveEvent,
         _componentFocusEvent, _componentDragStartEvent) {
 
         super();
@@ -15,7 +15,6 @@ export class Header extends EventEmitter {
         this._layoutManager = _layoutManager;
         this._parent = _parent;
         this._getActiveComponentItemEvent = _getActiveComponentItemEvent;
-        this._popoutEvent = _popoutEvent;
         this._maximiseToggleEvent = _maximiseToggleEvent;
         this._componentRemoveEvent = _componentRemoveEvent;
         this._componentFocusEvent = _componentFocusEvent;
@@ -26,9 +25,6 @@ export class Header extends EventEmitter {
             (item) => this.handleTabInitiatedComponentRemoveEvent(item),
             (item) => this.handleTabInitiatedComponentFocusEvent(item),
             (x, y, dragListener, item) => this.handleTabInitiatedDragStartEvent(x, y, dragListener, item));
-
-        this._show = settings.show;
-        this.setSide(settings.side);
 
         this._element = new Container({
             class: "lm_header",
@@ -66,10 +62,6 @@ export class Header extends EventEmitter {
                     text: 'Maximize',
                     onSelect: () => this._maximiseToggleEvent()
                 },
-                {
-                    text: 'Popup Window',
-                    onSelect: () => this.handleButtonPopoutEvent()
-                },
 
             ]
         });
@@ -78,9 +70,7 @@ export class Header extends EventEmitter {
     }
     // 
     // private _activeComponentItem: ComponentItem | null = null; // only used to identify active tab
-    get show() { return this._show; }
     get side() { return this._side; }
-    get leftRightSided() { return this._leftRightSided; }
     get layoutManager() { return this._layoutManager; }
     get parent() { return this._parent; }
     get tabs() { return this._tabsContainer.tabs; }
@@ -94,7 +84,6 @@ export class Header extends EventEmitter {
      */
     destroy() {
         this.emit('destroy');
-        this._popoutEvent = undefined;
         this._maximiseToggleEvent = undefined;
         this._componentRemoveEvent = undefined;
         this._componentFocusEvent = undefined;
@@ -120,11 +109,6 @@ export class Header extends EventEmitter {
         this.updateTabSizes();
     }
 
-    setSide(value) {
-        this._side = value;
-        this._leftRightSided = [Side.right, Side.left].includes(this._side);
-    }
-
     applyFocusedValue(value) {
         if (value) { this._element.class.add("lm_focused"); }
         else { this._element.class.remove("lm_focused"); }
@@ -140,8 +124,7 @@ export class Header extends EventEmitter {
             this._element.height = 'auto';
             let availableWidth;
 
-            if (this._leftRightSided) { availableWidth = this._element.dom.offsetHeight - this._controlsContainerElement.offsetHeight - this._tabControlOffset; }
-            else { availableWidth = this._element.dom.offsetWidth - this._controlsContainerElement.offsetWidth - this._tabControlOffset; }
+            availableWidth = this._element.dom.offsetWidth - this._controlsContainerElement.offsetWidth - this._tabControlOffset;
             this._tabsContainer.updateTabSizes(availableWidth, this._getActiveComponentItemEvent());
         }
     }
@@ -173,21 +156,5 @@ export class Header extends EventEmitter {
             this._componentDragStartEvent(x, y, dragListener, componentItem);
         }
 
-    }
-
-    handleButtonPopoutEvent() {
-        if (this._layoutManager.layoutConfig.settings.popoutWholeStack) {
-            if (this._popoutEvent === undefined) {
-                throw new UnexpectedUndefinedError('HHBPOE17834');
-            }
-            else { this._popoutEvent(); }
-        }
-        else {
-            const activeComponentItem = this._getActiveComponentItemEvent();
-            if (activeComponentItem) {
-                activeComponentItem.popout();
-            }
-            // else: if the stack is empty there won't be an active item (and nothing to popout)
-        }
     }
 }

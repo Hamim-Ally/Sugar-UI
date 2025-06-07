@@ -291,4 +291,3 @@ export class BrowserPopout extends EventEmitter {
         setTimeout(() => this.emit('closed'), 50);
     }
 }
-//# sourceMappingURL=browser-popout.js.map
