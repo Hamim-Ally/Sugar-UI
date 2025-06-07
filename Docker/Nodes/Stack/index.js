@@ -42,7 +42,7 @@ export class Stack extends ComponentParentableItem {
 
         this.isStack = true;
 
-        this._childElementContainer = new Container({ class: 'stack-content' });
+        this._childElementContainer = new Container({ class: 'stack-content', height: '100%', width: '100%'});
         this._childElementContainer.class.add("lm_items");
 
         this.on('resize', this._resizeListener);
@@ -564,9 +564,11 @@ export class Stack extends ComponentParentableItem {
     /** @internal */
     updateNodeSize() {
         if (this.element.style.display !== 'none') {
+   
             const content = getElementWidthAndHeight(this.element);
             this._childElementContainer.width = content.width;
-            this._childElementContainer.height = content.height;
+            this._childElementContainer.height = content.height - this._header.element.offsetHeight;
+            console.log(content.height);
             for (let i = 0; i < this.contentItems.length; i++) {
                 this.contentItems[i].element.style.width = numberToPixels(content.width);
                 this.contentItems[i].element.style.height = numberToPixels(content.height);
