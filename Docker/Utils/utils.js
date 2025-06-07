@@ -62,6 +62,7 @@ export function setElementHeight(element, height) {
     const heightAsPixels = numberToPixels(height);
     element.style.height = heightAsPixels;
 }
+
 /** @internal */
 export function getElementWidthAndHeight(element) {
     return {

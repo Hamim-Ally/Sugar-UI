@@ -33,18 +33,18 @@ class RowOrColumn extends ContentItem {
         }
     }
 
-    static getElementDimensionSize(element, dimension) {
-        if (dimension === 'width') { return getElementWidth(element); }
-        else { return getElementHeight(element); }
-    }
+    // static getElementDimensionSize(element, dimension) {
+    //     if (dimension === 'width') { return getElementWidth(element); }
+    //     else { return getElementHeight(element); }
+    // }
 
-    static setElementDimensionSize(element, dimension, value) {
-        if (dimension === 'width') { return setElementWidth(element, value); }
-        else { return setElementHeight(element, value); }
-    }
+    // static setElementDimensionSize(element, dimension, value) {
+    //     if (dimension === 'width') { return setElementWidth(element, value); }
+    //     else { return setElementHeight(element, value); }
+    // }
 
     static createElement(isColumn) {
-        return new Container({ class: ["lm_item", "lm_" + (isColumn ? "column" : "row")] });
+        return new Container({ class: ["lm_item", "lm_" + (isColumn ? "column" : "row")], flex: true, flexDirection: isColumn ? 'column' : 'row' });
     }
 
     newComponent(componentType, componentState, title, index) {
@@ -251,13 +251,15 @@ class RowOrColumn extends ContentItem {
             if (absoluteSizes.additionalPixel - i > 0) {
                 absoluteSizes.itemSizes[i]++;
             }
+
             if (this._isColumn) {
-                setElementWidth(this.contentItems[i].element, absoluteSizes.crossAxisSize);
-                setElementHeight(this.contentItems[i].element, absoluteSizes.itemSizes[i]);
+                this.contentItems[i].element.style.width = absoluteSizes.crossAxisSize + 'px';
+                this.contentItems[i].element.style.height = absoluteSizes.itemSizes[i] + 'px';
             }
+
             else {
-                setElementWidth(this.contentItems[i].element, absoluteSizes.itemSizes[i]);
-                setElementHeight(this.contentItems[i].element, absoluteSizes.crossAxisSize);
+                this.contentItems[i].element.style.width = absoluteSizes.itemSizes[i] + 'px';
+                this.contentItems[i].element.style.height = absoluteSizes.crossAxisSize + 'px';
             }
         }
     }

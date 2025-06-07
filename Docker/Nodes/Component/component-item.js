@@ -169,6 +169,7 @@ export class ComponentItem extends ContentItem {
     /** @internal */
     updateNodeSize(force) {
         if (this.element.style.display !== 'none') {
+            this.element.style.height = 'inherit';
             // Do not update size of hidden components to prevent unwanted reflows
             const { width, height } = getElementWidthAndHeight(this.element);
             this._container.setSizeToNodeSize(width, height, force);
