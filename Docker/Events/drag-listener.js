@@ -32,13 +32,13 @@ export class DragListener extends EventEmitter {
         this._dragging = false;
         this._eElement.addEventListener('pointerdown', this._pointerDownEventListener, { passive: true });
     }
-    
+
     destroy() {
         this.checkRemovePointerTrackingEventListeners();
         this._eElement.removeEventListener('pointerdown', this._pointerDownEventListener);
     }
 
-    cancelDrag() {this.processDragStop(undefined);}
+    cancelDrag() { this.processDragStop(undefined); }
 
     onPointerDown(oEvent) {
         if (this._allowableTargets.includes(oEvent.target) && oEvent.isPrimary) {
@@ -82,10 +82,10 @@ export class DragListener extends EventEmitter {
             }
         }
 
-        if (this._dragging) {this.emit('drag', this._nX, this._nY, dragEvent);}
+        if (this._dragging) { this.emit('drag', this._nX, this._nY, dragEvent); }
     }
 
-    onPointerUp(oEvent) {this.processDragStop(oEvent);}
+    onPointerUp(oEvent) { this.processDragStop(oEvent); }
 
     processDragStop(dragEvent) {
         var _a;

@@ -1,0 +1,30 @@
+{
+  "name": "sugar-ui",
+  "version": "1.0.0",
+  "description": "A JavaScript UI component library with docking layout support",
+  "author": "Hamim Ally",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hamimally/sugar-ui"
+  },
+  "keywords": ["ui", "components", "docking", "layout", "gui", "framework"],
+  "type": "module",
+  "main": "dist/sugar.js",
+  "module": "dist/sugar.js",
+  "exports": {
+    ".": "./dist/sugar.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev:ui": "vite --port 5173",
+    "dev:docker": "vite --port 5174",
+    "dev": "vite --port 5173",
+    "build": "vite build"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
+  }
+}
